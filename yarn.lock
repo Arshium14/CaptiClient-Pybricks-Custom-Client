@@ -3023,7 +3023,7 @@ __metadata:
     css-minimizer-webpack-plugin: ^6.0.0
     dexie: ^3.2.4
     dexie-observable: ^4.0.0-beta.13
-    dexie-react-hooks: ^1.1.7
+    dexie-react-hooks: ^4.4.0
     dfu: ^0.1.5
     dotenv: ^16.4.0
     dotenv-expand: ^10.0.0
@@ -8338,14 +8338,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dexie-react-hooks@npm:^1.1.7":
-  version: 1.1.7
-  resolution: "dexie-react-hooks@npm:1.1.7"
+"dexie-react-hooks@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "dexie-react-hooks@npm:4.4.0"
   peerDependencies:
-    "@types/react": ">=16"
-    dexie: ^3.2 || ^4.0.1-alpha
+    dexie: ">=4.2.0-alpha.1 <5.0.0"
     react: ">=16"
-  checksum: d1133546ab8d345a8e10d38d272eaa1efa3a34e7bdefacd2acc2419f30e52ea02ab29b19d8911755fbda5882e59d132ba5c3cb840dd4430d3cbca15ef5ea610e
+  checksum: 0feda42a0daec802ba4dfc1e6aa180a2e2f9e408f99bcf449374494969b2f5579eb8d0edfa8936bee6b0cec5c9523d8d7a6771b5f017a5846ed951d3dee04e28
   languageName: node
   linkType: hard
 
