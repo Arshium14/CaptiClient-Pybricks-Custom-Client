@@ -3021,7 +3021,7 @@ __metadata:
     copy-webpack-plugin: ^12.0.2
     css-loader: ^6.9.1
     css-minimizer-webpack-plugin: ^6.0.0
-    dexie: ^3.2.4
+    dexie: ^4.4.2
     dexie-observable: ^4.0.0-beta.13
     dexie-react-hooks: ^1.1.7
     dfu: ^0.1.5
@@ -8343,10 +8343,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dexie@npm:^3.2.4":
-  version: 3.2.4
-  resolution: "dexie@npm:3.2.4"
-  checksum: 4e5294a954118b6862c864b8c3970904a1733daebcd919488624520696411e2e81ed1bceeac3634c5c15a21e37ce4b8502ed41c4edfbc5ba3f5925c34d56497b
+"dexie@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "dexie@npm:4.4.2"
+  checksum: c3159e26386b9f1cf306c3510acbfd59cb9102de001c5e33753918bc03a2affcbdf573d58be94a322244da4e4432e7fb418fa93f1750302c6609606d5e99a6ac
   languageName: node
   linkType: hard
 
