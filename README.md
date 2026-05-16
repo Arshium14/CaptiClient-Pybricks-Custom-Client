@@ -1,22 +1,7 @@
-[![CI test status](https://github.com/pybricks/pybricks-code/workflows/CI%20Tests/badge.svg)](https://github.com/pybricks/pybricks-code/actions/workflows/test-pull-request.yml) [![codecov](https://codecov.io/gh/pybricks/pybricks-code/branch/master/graph/badge.svg?token=EJEBMN635G)](https://codecov.io/gh/pybricks/pybricks-code)
+# PyBricks CaptiClient
 
-pybricks-code
-=============
+PyBricks CaptiClient is a customized version of the open-source Pybricks Code editor focused on classroom-friendly coding, clearer project navigation, and real-time co-op programming.
 
-A Web App for programming LEGO® Powered Up smart hubs using Pybricks MicroPython.
+It keeps the Pybricks firmware and MicroPython workflow while adding CaptiClient-specific features such as shared room programs, cross-device collaboration support, a redesigned home experience, Jerry AI assistance, and clearer onboarding for new users.
 
-**Try it at <https://code.pybricks.com> or the latest updates <https://beta.pybricks.com>.**
-
-![screenshot](.README/screenshot.png)
-
-# Contributing
-
-If you'd like to contribute, please fork the repository and use a feature branch. Pull requests are warmly welcome.
-
-For more details, see the file [CONTRIBUTING.md](./CONTRIBUTING.md).
-
----
-
-<small>
-LEGO® is a trademark of the LEGO Group of companies which does not sponsor, authorize or endorse this project.
-</small>
+CaptiClient is not an official Pybricks product and is not affiliated with, sponsored by, endorsed by, or maintained by the Pybricks project. Pybricks names, firmware, documentation, APIs, and original app code remain the work of their respective authors and maintainers. This project preserves the required open-source license notices from Pybricks Code.
