@@ -3048,6 +3048,7 @@ __metadata:
     jest-resolve: ^29.7.0
     jest-watch-typeahead: ^2.2.2
     jszip: ^3.10.1
+    lib0: ^0.2.117
     license-webpack-plugin: ^3.0.0
     mini-css-extract-plugin: ^2.7.7
     monaco-editor: ^0.45.0
@@ -3100,8 +3101,13 @@ __metadata:
     webpack-dev-server: ^4.15.1
     webpack-manifest-plugin: ^5.0.0
     workbox-webpack-plugin: ^7.0.0
+    ws: ^8.17.1
     xterm: ^5.4.0-beta.37
     xterm-addon-fit: ^0.8.0
+    y-monaco: ^0.1.6
+    y-protocols: ^1.0.7
+    y-websocket: ^3.0.0
+    yjs: ^13.6.30
     zen-push: ^0.3.1
   languageName: unknown
   linkType: soft
@@ -11139,6 +11145,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"isomorphic.js@npm:^0.2.4":
+  version: 0.2.5
+  resolution: "isomorphic.js@npm:0.2.5"
+  checksum: d8d1b083f05f3c337a06628b982ac3ce6db953bbef14a9de8ad49131250c3592f864b73c12030fdc9ef138ce97b76ef55c7d96a849561ac215b1b4b9d301c8e9
+  languageName: node
+  linkType: hard
+
 "istanbul-lib-coverage@npm:^3.0.0, istanbul-lib-coverage@npm:^3.2.0":
   version: 3.2.0
   resolution: "istanbul-lib-coverage@npm:3.2.0"
@@ -12051,6 +12064,19 @@ __metadata:
     prelude-ls: ~1.1.2
     type-check: ~0.3.2
   checksum: 0d084a524231a8246bb10fec48cdbb35282099f6954838604f3c7fc66f2e16fa66fd9cc2f3f20a541a113c4dafdf181e822c887c8a319c9195444e6c64ac395e
+  languageName: node
+  linkType: hard
+
+"lib0@npm:^0.2.102, lib0@npm:^0.2.117, lib0@npm:^0.2.43, lib0@npm:^0.2.85, lib0@npm:^0.2.99":
+  version: 0.2.117
+  resolution: "lib0@npm:0.2.117"
+  dependencies:
+    isomorphic.js: ^0.2.4
+  bin:
+    0ecdsa-generate-keypair: bin/0ecdsa-generate-keypair.js
+    0gentesthtml: bin/gentesthtml.js
+    0serve: bin/0serve.js
+  checksum: 948a6bb292cc643bcaea948b82f72a05edb83ff172803ba0ebdbf87361f6446d2877b61611f20ccd377c7bfa0453925b27ea75db8b694abab84216c6ca50325c
   languageName: node
   linkType: hard
 
@@ -17684,7 +17710,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.13.0, ws@npm:^8.5.0, ws@npm:^8.8.0":
+"ws@npm:^8.13.0, ws@npm:^8.17.1, ws@npm:^8.5.0, ws@npm:^8.8.0":
   version: 8.17.1
   resolution: "ws@npm:8.17.1"
   peerDependencies:
@@ -17726,6 +17752,41 @@ __metadata:
   version: 5.4.0-beta.37
   resolution: "xterm@npm:5.4.0-beta.37"
   checksum: a9bcbb355b6ce3f685a48a52031c1eb26b3327794284a9b7636f60ef8cb43a9bcb8e16d33956d5f4616301c5b0d14c449a133f77a08ab12d30d77a3a8681d08d
+  languageName: node
+  linkType: hard
+
+"y-monaco@npm:^0.1.6":
+  version: 0.1.6
+  resolution: "y-monaco@npm:0.1.6"
+  dependencies:
+    lib0: ^0.2.43
+  peerDependencies:
+    monaco-editor: ">=0.20.0"
+    yjs: ^13.3.1
+  checksum: 3c4ddd0b26eccb2641b52327b8e9889900667d9fbec6cfad59359e2047ec23deab6a1a82ba2f059c7233e75c6053f4a508bda7f41bbf1fee0e4e8365e1f73741
+  languageName: node
+  linkType: hard
+
+"y-protocols@npm:^1.0.5, y-protocols@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "y-protocols@npm:1.0.7"
+  dependencies:
+    lib0: ^0.2.85
+  peerDependencies:
+    yjs: ^13.0.0
+  checksum: d58579ee542b6b9f4e3c3223fd24efcfd4af6f97acdb40a3d362713dcce812dd3dd086cc1f221a6ccb50bd373ff4b3d30fc2462a17f7804e0d1a8bd187099f31
+  languageName: node
+  linkType: hard
+
+"y-websocket@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "y-websocket@npm:3.0.0"
+  dependencies:
+    lib0: ^0.2.102
+    y-protocols: ^1.0.5
+  peerDependencies:
+    yjs: ^13.5.6
+  checksum: e52ffa3a299d71c36cd6015148c757f4a60881fb4629a970a2cfdc2460133419f3a0d218f92234330abbab87277126ffd0073dac210009fda77ab258aa82be3f
   languageName: node
   linkType: hard
 
@@ -17805,6 +17866,15 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^21.0.0
   checksum: 00d58a2c052937fa044834313f07910fd0a115dec5ee35919e857eeee3736b21a4eafa8264535800ba8bac312991ce785ecb8a51f4d2cc8c4676d865af1cfbde
+  languageName: node
+  linkType: hard
+
+"yjs@npm:^13.6.30":
+  version: 13.6.30
+  resolution: "yjs@npm:13.6.30"
+  dependencies:
+    lib0: ^0.2.99
+  checksum: b8ddb313cd40579da7b9b09bd878f30efe79b3fa6f9bc7ab96c1ca80f305b557919035aaef417a3d65f2b0aad732c79fcfd84ceb82855869605fb6b0f40cdffd
   languageName: node
   linkType: hard
 

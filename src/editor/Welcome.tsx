@@ -3,7 +3,6 @@
 
 // welcome screen that is shown when no editor is open.
 
-import { Colors } from '@blueprintjs/core';
 import React, { useEffect, useRef } from 'react';
 import Two from 'two.js';
 import { useTernaryDarkMode } from 'usehooks-ts';
@@ -53,7 +52,7 @@ function reduce(state: State, action: Action): State {
 }
 
 function getFillColor(isDarkMode: boolean): string {
-    return isDarkMode ? Colors.GRAY1 : Colors.GRAY5;
+    return isDarkMode ? '#acebc9' : '#338e7f';
 }
 
 type WelcomeProps = {

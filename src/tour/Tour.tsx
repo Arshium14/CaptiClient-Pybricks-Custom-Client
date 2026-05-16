@@ -1,8 +1,16 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2022-2023 The Pybricks Authors
 
-import { Colors, Icon } from '@blueprintjs/core';
-import { Archive, Play, Plus } from '@blueprintjs/icons';
+import { Icon } from '@blueprintjs/core';
+import {
+    Archive,
+    Home,
+    InfoSign,
+    KeyEnter,
+    People,
+    Play,
+    Plus,
+} from '@blueprintjs/icons';
 import React, { useCallback, useMemo, useState } from 'react';
 import Joyride, {
     ACTIONS,
@@ -16,7 +24,7 @@ import Joyride, {
 import { useDispatch } from 'react-redux';
 import { useEffectOnce, useLocalStorage, useTernaryDarkMode } from 'usehooks-ts';
 import { Activity, useActivitiesSelectedActivity } from '../activities/hooks';
-import { appName, legoRegisteredTrademark, pybricksBlue } from '../app/constants';
+import { legoRegisteredTrademark, pybricksBlue } from '../app/constants';
 import { useSelector } from '../reducers';
 import { tourStart, tourStop } from './actions';
 import { useI18n } from './i18n';
@@ -26,13 +34,69 @@ const WelcomeStep = React.memo(function WelcomeStep() {
 
     return (
         <>
-            <p>{i18n.translate('steps.welcome.message', { appName })}</p>
+            <p>
+                {i18n.translate('steps.welcome.message', {
+                    appName: 'PyBricks CaptiClient',
+                })}
+            </p>
             <p>
                 {i18n.translate('steps.welcome.action', {
                     next: <strong>{i18n.translate('next')}</strong>,
                 })}
             </p>
         </>
+    );
+});
+
+const CaptiClientInfoStep = React.memo(function CaptiClientInfoStep() {
+    const i18n = useI18n();
+
+    return (
+        <p>
+            {i18n.translate('steps.captiClientInfo.message', {
+                icon: (
+                    <Icon icon={<InfoSign />} style={{ verticalAlign: 'text-top' }} />
+                ),
+            })}
+        </p>
+    );
+});
+
+const HomeStep = React.memo(function HomeStep() {
+    const i18n = useI18n();
+
+    return (
+        <p>
+            {i18n.translate('steps.home.message', {
+                icon: <Icon icon={<Home />} style={{ verticalAlign: 'text-top' }} />,
+            })}
+        </p>
+    );
+});
+
+const CoopStep = React.memo(function CoopStep() {
+    const i18n = useI18n();
+
+    return (
+        <p>
+            {i18n.translate('steps.coop.message', {
+                icon: <Icon icon={<People />} style={{ verticalAlign: 'text-top' }} />,
+            })}
+        </p>
+    );
+});
+
+const JerryAiStep = React.memo(function JerryAiStep() {
+    const i18n = useI18n();
+
+    return (
+        <p>
+            {i18n.translate('steps.jerryAi.message', {
+                icon: (
+                    <Icon icon={<KeyEnter />} style={{ verticalAlign: 'text-top' }} />
+                ),
+            })}
+        </p>
     );
 });
 
@@ -74,7 +138,7 @@ const FlashPybricksFirmwareStep = React.memo(function FlashPybricksFirmwareStep(
     return (
         <p>
             {i18n.translate('steps.flashPybricksFirmware.message', {
-                appName,
+                appName: 'PyBricks CaptiClient',
             })}
         </p>
     );
@@ -138,6 +202,32 @@ const Tour: React.FunctionComponent = () => {
                 disableBeacon: selectedActivity === Activity.Settings,
             },
             {
+                target: '#pb-toolbar-capticlient-button',
+                content: <CaptiClientInfoStep />,
+                disableBeacon: true,
+            },
+            {
+                target:
+                    selectedActivity === Activity.Home
+                        ? '#pb-home-new-file-button'
+                        : '[itemId=pb-activities-home-tab]',
+                content: <HomeStep />,
+                disableBeacon: selectedActivity === Activity.Home,
+            },
+            {
+                target:
+                    selectedActivity === Activity.Home
+                        ? '#pb-home-coop-panel'
+                        : '[itemId=pb-activities-home-tab]',
+                content: <CoopStep />,
+                disableBeacon: selectedActivity === Activity.Home,
+            },
+            {
+                target: '#pb-toolbar-ai-button',
+                content: <JerryAiStep />,
+                disableBeacon: true,
+            },
+            {
                 target:
                     selectedActivity === Activity.Settings
                         ? '#pb-settings-flash-pybricks-button'
@@ -187,11 +277,42 @@ const Tour: React.FunctionComponent = () => {
         () => ({
             options: {
                 primaryColor: pybricksBlue,
-                // $pt-dark-text-color / $pt-text-color
-                textColor: isDarkMode ? Colors.LIGHT_GRAY5 : Colors.DARK_GRAY1,
-                // $pt-dark-app-background-color / $pt-app-background-color
-                backgroundColor: isDarkMode ? Colors.DARK_GRAY2 : Colors.LIGHT_GRAY5,
-                arrowColor: isDarkMode ? Colors.DARK_GRAY2 : Colors.LIGHT_GRAY5,
+                textColor: isDarkMode ? '#eef8f4' : '#1f1f1f',
+                backgroundColor: isDarkMode ? '#172523' : '#ffffff',
+                arrowColor: isDarkMode ? '#172523' : '#ffffff',
+                overlayColor: 'rgba(31, 31, 31, 0.28)',
+                spotlightShadow: '0 0 0 9999px rgba(31, 31, 31, 0.28)',
+                zIndex: 2000,
+            },
+            tooltip: {
+                borderRadius: 20,
+                boxShadow: isDarkMode
+                    ? '0 8px 32px rgba(0, 0, 0, 0.36)'
+                    : '0 8px 32px rgba(51, 142, 127, 0.18)',
+                padding: 22,
+            },
+            tooltipTitle: {
+                color: pybricksBlue,
+                fontWeight: 900,
+            },
+            buttonNext: {
+                backgroundColor: pybricksBlue,
+                borderRadius: 999,
+                color: '#ffffff',
+                fontWeight: 800,
+                padding: '10px 18px',
+            },
+            buttonBack: {
+                color: isDarkMode ? '#acebc9' : pybricksBlue,
+                fontWeight: 800,
+                marginRight: 8,
+            },
+            buttonClose: {
+                color: isDarkMode ? '#acebc9' : pybricksBlue,
+            },
+            buttonSkip: {
+                color: isDarkMode ? '#b2c7c1' : '#5f6368',
+                fontWeight: 800,
             },
         }),
         [isDarkMode],
@@ -229,6 +350,10 @@ const Tour: React.FunctionComponent = () => {
                 if (typeof nextStep?.target === 'string') {
                     if (nextStep.target.startsWith('[itemId=pb-activities-explorer-')) {
                         setSelectedActivity(Activity.Explorer);
+                    } else if (
+                        nextStep.target.startsWith('[itemId=pb-activities-home-')
+                    ) {
+                        setSelectedActivity(Activity.Home);
                     } else if (
                         nextStep.target.startsWith('[itemId=pb-activities-settings-')
                     ) {

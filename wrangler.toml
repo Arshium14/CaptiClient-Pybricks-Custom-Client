@@ -1,0 +1,12 @@
+name = "capticlient-coop"
+main = "cloudflare/coop-worker.ts"
+compatibility_date = "2026-05-16"
+
+[durable_objects]
+bindings = [
+  { name = "COOP_ROOMS", class_name = "CoopRoom" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["CoopRoom"]

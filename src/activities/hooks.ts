@@ -8,6 +8,8 @@ import { useEffectOnce, useLocalStorage, useSessionStorage } from 'usehooks-ts';
 export enum Activity {
     /** No activity is selected. */
     None = 'activity.none',
+    /** The home activity is selected. */
+    Home = 'activity.home',
     /** The explorer activity is selected. */
     Explorer = 'activity.explorer',
     /** The settings activity is selected. */

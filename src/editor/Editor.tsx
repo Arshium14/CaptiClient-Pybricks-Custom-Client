@@ -25,6 +25,20 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useId } from 'react-aria';
 import { useDispatch } from 'react-redux';
 import { useEffectOnce, useTernaryDarkMode } from 'usehooks-ts';
+import {
+    AiEditorCodeRequestPayload,
+    AiInsertCodePayload,
+    aiInsertCodeEvent,
+    aiRequestEditorCodeEvent,
+} from '../ai/events';
+import { CoopStatusUpdate, startCoopSession } from '../coop/collaboration';
+import {
+    CoopRoomPayload,
+    coopRoomChangedEvent,
+    getCoopProgramId,
+    getCoopRoomId,
+    isCoopProgramFilePath,
+} from '../coop/events';
 import { UUID } from '../fileStorage';
 import { useFileStoragePath } from '../fileStorage/hooks';
 import { compile } from '../mpy/actions';
@@ -330,6 +344,29 @@ const EditorTabs: React.FunctionComponent<EditorTabsProps> = ({ onChange }) => {
     );
 };
 
+const CoopBar: React.FunctionComponent<
+    Readonly<{ roomId: string; update: CoopStatusUpdate }>
+> = ({ roomId, update }) => (
+    <div className={`pb-editor-coop-bar pb-${update.status}`}>
+        <div>
+            <strong>Co-op {roomId}</strong>
+            <span>{update.status}</span>
+        </div>
+        <div className="pb-editor-coop-users">
+            {update.users.map((user) => (
+                <span
+                    key={user.clientId}
+                    style={
+                        { '--pb-coop-user-color': user.color } as React.CSSProperties
+                    }
+                >
+                    {user.name}
+                </span>
+            ))}
+        </div>
+    </div>
+);
+
 /**
  * Wrapper around useEffect() hook that uses {@link maybeEditor}.
  * @param maybeEditor The editor or undefined if the editor is not mounted.
@@ -378,6 +415,9 @@ const Editor: React.FunctionComponent = () => {
     const dispatch = useDispatch();
 
     const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>();
+    const [coopRoomId, setCoopRoomId] = useState(() => getCoopRoomId());
+    const [coopProgramId, setCoopProgramId] = useState(() => getCoopProgramId());
+    const [coopUpdate, setCoopUpdate] = useState<CoopStatusUpdate>();
     const { isDarkMode } = useTernaryDarkMode();
 
     const i18n = useI18n();
@@ -459,6 +499,7 @@ const Editor: React.FunctionComponent = () => {
 
         const monacoEditor = monaco.editor.create(editorRef.current, {
             model: null,
+            fontFamily: '"Google Sans Code", Consolas, monospace',
             fontSize: 18,
             minimap: { enabled: false },
             contextmenu: false,
@@ -481,9 +522,101 @@ const Editor: React.FunctionComponent = () => {
     const { activeFileUuid } = useSelector((s) => s.editor);
     const fileName = useFileStoragePath(activeFileUuid ?? ('' as UUID));
 
+    useEffect(() => {
+        const handleRoomChanged = (event: Event): void => {
+            const payload = (event as CustomEvent<CoopRoomPayload>).detail;
+
+            setCoopRoomId(payload.roomId ?? getCoopRoomId());
+            setCoopProgramId(payload.programId ?? getCoopProgramId());
+        };
+
+        window.addEventListener(coopRoomChangedEvent, handleRoomChanged);
+        window.addEventListener('popstate', handleRoomChanged);
+
+        return () => {
+            window.removeEventListener(coopRoomChangedEvent, handleRoomChanged);
+            window.removeEventListener('popstate', handleRoomChanged);
+        };
+    }, []);
+
+    useEffect(() => {
+        const model = editor?.getModel();
+
+        if (
+            !editor ||
+            !model ||
+            !activeFileUuid ||
+            model.uri.path !== activeFileUuid ||
+            !coopRoomId ||
+            !coopProgramId ||
+            !isCoopProgramFilePath(fileName, coopRoomId, coopProgramId)
+        ) {
+            setCoopUpdate(undefined);
+            return undefined;
+        }
+
+        setCoopUpdate({
+            status: 'connecting',
+            users: [],
+        });
+
+        const session = startCoopSession(
+            coopRoomId,
+            coopProgramId,
+            editor,
+            model,
+            setCoopUpdate,
+        );
+
+        return () => session.destroy();
+    }, [activeFileUuid, coopProgramId, coopRoomId, editor, fileName]);
+
+    useEffect(() => {
+        if (!editor) {
+            return undefined;
+        }
+
+        const handleCodeRequest = (event: Event): void => {
+            if (!editor.getModel()) {
+                return;
+            }
+
+            const { respond } = (event as CustomEvent<AiEditorCodeRequestPayload>)
+                .detail;
+            respond({ code: editor.getValue(), fileName });
+        };
+        const handleInsertCode = (event: Event): void => {
+            const model = editor.getModel();
+
+            if (!model) {
+                return;
+            }
+
+            const { code } = (event as CustomEvent<AiInsertCodePayload>).detail;
+            editor.executeEdits('jerry-ai', [
+                {
+                    range: editor.getSelection() ?? model.getFullModelRange(),
+                    text: code,
+                    forceMoveMarkers: true,
+                },
+            ]);
+            editor.focus();
+        };
+
+        window.addEventListener(aiRequestEditorCodeEvent, handleCodeRequest);
+        window.addEventListener(aiInsertCodeEvent, handleInsertCode);
+        return () => {
+            window.removeEventListener(aiRequestEditorCodeEvent, handleCodeRequest);
+            window.removeEventListener(aiInsertCodeEvent, handleInsertCode);
+        };
+    }, [editor, fileName]);
+
     return (
         <div className="pb-editor">
             <EditorTabs onChange={() => editor?.focus()} />
+            {coopRoomId && coopUpdate && (
+                <CoopBar roomId={coopRoomId} update={coopUpdate} />
+            )}
             <ResizeSensor onResize={() => editor?.layout()}>
                 <ContextMenu
                     className={classNames('pb-editor-tabpanel', isEmpty && 'pb-empty')}

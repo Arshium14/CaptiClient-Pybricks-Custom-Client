@@ -2,6 +2,19 @@
 // Copyright (c) 2022-2023 The Pybricks Authors
 
 @use '@blueprintjs/core/lib/scss/variables' as bp;
+@use '../variables' as pb;
+
+.pb-terminal {
+    overflow: hidden;
+    border: 1px solid pb.$pybricks-border;
+    border-radius: bp.$pt-grid-size * 1.6;
+    background: #101918;
+    box-shadow: inset 0 0 0 1px rgba(pb.$pybricks-mint, 0.08);
+
+    .#{bp.$ns}-dark & {
+        border-color: pb.$pybricks-dark-border;
+    }
+}
 
 .pb-terminal-bell-overlay {
     position: absolute;

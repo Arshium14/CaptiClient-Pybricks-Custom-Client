@@ -78,6 +78,11 @@ declare module '*.json' {
     export default src;
 }
 
+declare module '*.txt' {
+    const src: string;
+    export default src;
+}
+
 declare module '*.zip' {
     const src: string;
     export default src;

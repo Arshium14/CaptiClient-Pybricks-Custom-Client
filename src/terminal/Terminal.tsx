@@ -10,12 +10,20 @@ import {
     MenuItem,
     ResizeSensor,
 } from '@blueprintjs/core';
-import { Blank, Clipboard, Duplicate, Trash } from '@blueprintjs/icons';
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Blank, Clipboard, Duplicate, KeyEnter, Trash } from '@blueprintjs/icons';
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { useDispatch } from 'react-redux';
 import { useTernaryDarkMode } from 'usehooks-ts';
 import { Terminal as XTerm } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import { openAiWithPrompt } from '../ai/events';
 import { isMacOS } from '../utils/os';
 import { TerminalContext } from './TerminalContext';
 import { receiveData } from './actions';
@@ -62,13 +70,29 @@ function createXTerm(): { xterm: XTerm; fitAddon: FitAddon } {
     return { xterm, fitAddon };
 }
 
-type ContextMenuContentProps = { xterm: XTerm };
+function cleanTerminalText(text: string): string {
+    const escapeCodePattern = new RegExp(
+        `${String.fromCharCode(27)}(?:[@-Z\\\\-_]|\\[[0-?]*[ -/]*[@-~])`,
+        'g',
+    );
+
+    return text.replace(escapeCodePattern, '').replace(/\r/g, '').trim();
+}
+
+type ContextMenuContentProps = {
+    xterm: XTerm;
+    getRecentText: () => string;
+};
 
 const ContextMenuContent: React.FunctionComponent<ContextMenuContentProps> = ({
     xterm,
+    getRecentText,
 }) => {
     const i18n = useI18n();
     const [hasSelection, setHasSelection] = useState(xterm.hasSelection());
+    const terminalText = cleanTerminalText(
+        hasSelection ? xterm.getSelection() : getRecentText(),
+    );
 
     useEffect(() => {
         const subscription = xterm.onSelectionChange(() => {
@@ -91,6 +115,20 @@ const ContextMenuContent: React.FunctionComponent<ContextMenuContentProps> = ({
                 icon={<Duplicate />}
                 label={isMacOS() ? 'Cmd-C' : 'Ctrl-Shift-C'}
                 disabled={!hasSelection}
+            />
+            <MenuItem
+                onClick={(): void => {
+                    if (!terminalText) {
+                        return;
+                    }
+
+                    openAiWithPrompt(
+                        `Explain this Pybricks terminal output and suggest a fix:\n\n${terminalText}`,
+                    );
+                }}
+                text="Ask Jerry"
+                icon={<KeyEnter />}
+                disabled={!terminalText}
             />
             <MenuItem
                 onClick={async (): Promise<void> => {
@@ -120,6 +158,11 @@ const Terminal: React.FunctionComponent = () => {
     const { isDarkMode } = useTernaryDarkMode();
     const dispatch = useDispatch();
     const terminalStream = useContext(TerminalContext);
+    const recentOutputRef = useRef('');
+    const getRecentText = useCallback(
+        () => cleanTerminalText(recentOutputRef.current).slice(-4000),
+        [],
+    );
 
     // xterm.open() has to be called after terminalRef has been rendered
     useEffect(() => {
@@ -181,7 +224,10 @@ const Terminal: React.FunctionComponent = () => {
     // wire shared context to terminal output
     useEffect(() => {
         const subscription = terminalStream.dataSource.observable.subscribe({
-            next: (d) => xterm.write(d),
+            next: (d) => {
+                recentOutputRef.current = `${recentOutputRef.current}${d}`.slice(-8000);
+                xterm.write(d);
+            },
         });
 
         return () => subscription.unsubscribe();
@@ -236,7 +282,7 @@ const Terminal: React.FunctionComponent = () => {
     return (
         <ContextMenu
             className="h-100"
-            content={<ContextMenuContent xterm={xterm} />}
+            content={<ContextMenuContent xterm={xterm} getRecentText={getRecentText} />}
             popoverProps={{ onClosed: () => xterm.focus() }}
         >
             <audio hidden preload="auto" ref={bellRef}>

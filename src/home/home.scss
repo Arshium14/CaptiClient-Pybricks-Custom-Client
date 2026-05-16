@@ -1,0 +1,241 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 The Pybricks Authors
+
+@use '@blueprintjs/core/lib/scss/variables' as bp;
+@use '../variables' as pb;
+
+.pb-home {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: bp.$pt-grid-size * 1.5;
+    overflow-y: auto;
+    color: pb.$pybricks-text;
+
+    .#{bp.$ns}-dark & {
+        color: pb.$pybricks-dark-text;
+    }
+}
+
+.pb-home-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: bp.$pt-grid-size;
+    padding-bottom: bp.$pt-grid-size;
+    border-bottom: 1px solid pb.$pybricks-border;
+
+    .#{bp.$ns}-dark & {
+        border-bottom-color: pb.$pybricks-dark-border;
+    }
+
+    h1 {
+        margin: 0;
+        color: pb.$pybricks-green;
+        font-size: 1.45rem;
+        font-weight: 900;
+    }
+
+    p {
+        margin: 4px 0 0;
+        color: pb.$pybricks-muted;
+        font-size: 0.78rem;
+
+        .#{bp.$ns}-dark & {
+            color: pb.$pybricks-dark-muted;
+        }
+    }
+}
+
+.pb-home-section {
+    h2 {
+        margin: 0 0 bp.$pt-grid-size * 0.7;
+        color: pb.$pybricks-green;
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+
+        .#{bp.$ns}-dark & {
+            color: pb.$pybricks-mint;
+        }
+    }
+}
+
+.pb-home-list {
+    display: flex;
+    flex-direction: column;
+    gap: bp.$pt-grid-size * 0.6;
+}
+
+.pb-home-file {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    align-items: center;
+    gap: bp.$pt-grid-size * 0.8;
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid rgba(pb.$pybricks-green, 0.12);
+    border-radius: 10px;
+    background: #f7fbf8;
+    color: pb.$pybricks-text;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease;
+
+    &:hover {
+        border-color: rgba(pb.$pybricks-green, 0.24);
+        background: rgba(pb.$pybricks-mint, 0.34);
+        color: pb.$pybricks-green;
+    }
+
+    svg {
+        color: pb.$pybricks-green;
+    }
+
+    span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .#{bp.$ns}-dark & {
+        border-color: rgba(pb.$pybricks-mint, 0.16);
+        background: pb.$pybricks-dark-panel-2;
+        color: pb.$pybricks-dark-text;
+
+        &:hover {
+            border-color: rgba(pb.$pybricks-mint, 0.28);
+            background: pb.$pybricks-dark-border;
+            color: pb.$pybricks-mint;
+        }
+
+        svg {
+            color: pb.$pybricks-mint;
+        }
+    }
+}
+
+.pb-home-empty {
+    padding: bp.$pt-grid-size * 1.4;
+    border: 1px dashed pb.$pybricks-border;
+    border-radius: 10px;
+    color: pb.$pybricks-muted;
+    font-size: 0.84rem;
+
+    .#{bp.$ns}-dark & {
+        border-color: pb.$pybricks-dark-border;
+        color: pb.$pybricks-dark-muted;
+    }
+}
+
+.pb-home-coop-panel {
+    display: flex;
+    flex-direction: column;
+    gap: bp.$pt-grid-size * 0.8;
+    padding: bp.$pt-grid-size;
+    border: 1px solid rgba(pb.$pybricks-green, 0.14);
+    border-radius: 10px;
+    background: #f7fbf8;
+
+    p {
+        margin: 0;
+        color: pb.$pybricks-muted;
+        font-size: 0.82rem;
+        line-height: 1.35;
+    }
+
+    .#{bp.$ns}-dark & {
+        border-color: rgba(pb.$pybricks-mint, 0.16);
+        background: pb.$pybricks-dark-panel-2;
+
+        p {
+            color: pb.$pybricks-dark-muted;
+        }
+    }
+}
+
+.pb-home-coop-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(110px, 0.65fr);
+    gap: bp.$pt-grid-size * 0.7;
+}
+
+.pb-home-coop-actions,
+.pb-home-coop-active-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: bp.$pt-grid-size * 0.7;
+}
+
+.pb-home-coop-active {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: bp.$pt-grid-size;
+    padding: 8px 10px;
+    border: 1px solid rgba(pb.$pybricks-green, 0.16);
+    border-radius: 10px;
+    background: pb.$pybricks-panel;
+
+    > div:first-child {
+        display: grid;
+        min-width: 0;
+        gap: 1px;
+    }
+
+    span,
+    small {
+        color: pb.$pybricks-muted;
+        font-size: 0.72rem;
+    }
+
+    strong {
+        color: pb.$pybricks-green;
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+    }
+
+    small {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .#{bp.$ns}-dark & {
+        border-color: rgba(pb.$pybricks-mint, 0.18);
+        background: pb.$pybricks-dark-panel;
+
+        span,
+        small {
+            color: pb.$pybricks-dark-muted;
+        }
+
+        strong {
+            color: pb.$pybricks-mint;
+        }
+    }
+}
+
+.pb-home-coop-status {
+    color: pb.$pybricks-green;
+    font-size: 0.82rem;
+    font-weight: 800;
+
+    .#{bp.$ns}-dark & {
+        color: pb.$pybricks-mint;
+    }
+}
+
+@media (max-width: 420px) {
+    .pb-home-coop-fields,
+    .pb-home-coop-active {
+        grid-template-columns: 1fr;
+    }
+}

@@ -6,11 +6,30 @@
 @use '@blueprintjs/core/lib/scss/variables' as bp;
 @use '../variables' as pb;
 
+@font-face {
+    font-family: 'Pro Pixie';
+    src: url('./fonts/pro-pixie.ttf') format('truetype');
+    font-display: swap;
+}
+
 .pb-toolbar {
     padding: bp.$pt-grid-size bp.$pt-grid-size * 1.5;
     z-index: bp.$pt-z-index-content;
     display: flex;
     flex-wrap: nowrap;
+    align-items: center;
+    gap: bp.$pt-grid-size;
+    margin: bp.$pt-grid-size;
+    border: 1px solid pb.$pybricks-border;
+    border-radius: bp.$pt-grid-size * 2.4;
+    background: pb.$pybricks-panel;
+    box-shadow: 0 8px 32px pb.$pybricks-shadow;
+
+    .#{bp.$ns}-dark & {
+        background: pb.$pybricks-dark-panel;
+        border-color: pb.$pybricks-dark-border;
+        box-shadow: 0 8px 32px pb.$pybricks-dark-shadow;
+    }
 
     // make small buttons more square and slightly smaller (some of this is
     // done in react)
@@ -26,8 +45,11 @@
     }
 
     &-group {
+        display: flex;
+        column-gap: 0;
+
         &.pb-align-left {
-            margin-right: bp.$pt-grid-size * 2;
+            margin-right: bp.$pt-grid-size;
         }
 
         &.pb-align-right {
@@ -38,5 +60,92 @@
     &-action-button:focus-visible:not(.pb-focus-managed) {
         // to get contrast since button background and focus ring are both blue
         outline-offset: 4px;
+    }
+
+    &-wordmark {
+        align-self: center;
+        margin-left: bp.$pt-grid-size * 0.2;
+        color: pb.$pybricks-green;
+        font-family: 'Pro Pixie', 'Google Sans Flex', sans-serif;
+        font-size: 2rem;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+
+        .#{bp.$ns}-dark & {
+            color: pb.$pybricks-mint;
+        }
+    }
+
+    .#{bp.$ns}-button {
+        min-height: 36px;
+        border-radius: 10px;
+    }
+
+    .#{bp.$ns}-button-group .#{bp.$ns}-button,
+    .#{bp.$ns}-button-group:not(.#{bp.$ns}-minimal) .#{bp.$ns}-button,
+    .#{bp.$ns}-button-group .#{bp.$ns}-popover-wrapper .#{bp.$ns}-button {
+        border-radius: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .#{bp.$ns}-button-group .#{bp.$ns}-button:first-child,
+    .#{bp.$ns}-button-group .#{bp.$ns}-popover-wrapper:first-child .#{bp.$ns}-button {
+        border-radius: 10px 0 0 10px !important;
+    }
+
+    .#{bp.$ns}-button-group .#{bp.$ns}-button:last-child,
+    .#{bp.$ns}-button-group .#{bp.$ns}-popover-wrapper:last-child .#{bp.$ns}-button {
+        border-radius: 0 10px 10px 0 !important;
+    }
+
+    .#{bp.$ns}-button-group .#{bp.$ns}-button:only-child,
+    .#{bp.$ns}-button-group .#{bp.$ns}-popover-wrapper:only-child .#{bp.$ns}-button {
+        border-radius: 10px !important;
+    }
+
+    .#{bp.$ns}-button.#{bp.$ns}-minimal,
+    .#{bp.$ns}-button:not(.#{bp.$ns}-intent-primary) {
+        color: pb.$pybricks-green;
+
+        .#{bp.$ns}-dark & {
+            color: pb.$pybricks-mint;
+        }
+    }
+
+    .#{bp.$ns}-button.#{bp.$ns}-minimal:hover,
+    .#{bp.$ns}-button:not(.#{bp.$ns}-intent-primary):hover {
+        background: rgba(pb.$pybricks-mint, 0.48);
+        color: pb.$pybricks-green;
+
+        .#{bp.$ns}-dark & {
+            background: pb.$pybricks-dark-panel-2;
+            color: pb.$pybricks-mint;
+        }
+    }
+
+    .pb-toolbar-action-button.#{bp.$ns}-intent-primary {
+        background: pb.$pybricks-green;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18) !important;
+
+        &:hover,
+        &.#{bp.$ns}-active {
+            background: pb.$pybricks-green-2;
+            filter: brightness(1.03);
+        }
+
+        &.#{bp.$ns}-disabled,
+        &[aria-disabled='true'] {
+            background: rgba(pb.$pybricks-green, 0.42);
+            filter: none;
+        }
+
+        img {
+            filter: drop-shadow(0 1px 1px rgba(31, 31, 31, 0.18));
+        }
+    }
+
+    .#{bp.$ns}-button:not(.#{bp.$ns}-minimal) {
+        box-shadow: inset 0 0 0 1px rgba(pb.$pybricks-green, 0.12) !important;
     }
 }

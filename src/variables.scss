@@ -10,7 +10,23 @@ $status-bar-height: 30px;
 $narrow-screen-limit: 700px;
 
 // Official Pybricks branding color.
-$pybricks-blue: #0088ce;
+$pybricks-blue: #338e7f;
+$pybricks-green: #338e7f;
+$pybricks-green-2: #4aa28f;
+$pybricks-mint: #acebc9;
+$pybricks-sage: #f3efe8;
+$pybricks-panel: #ffffff;
+$pybricks-border: #d8d3cc;
+$pybricks-text: #1f1f1f;
+$pybricks-muted: #5f6368;
+$pybricks-shadow: rgba(51, 142, 127, 0.15);
+$pybricks-dark-bg: #101918;
+$pybricks-dark-panel: #172523;
+$pybricks-dark-panel-2: #1f302d;
+$pybricks-dark-border: #36514c;
+$pybricks-dark-text: #eef8f4;
+$pybricks-dark-muted: #b2c7c1;
+$pybricks-dark-shadow: rgba(0, 0, 0, 0.36);
 
 // blueprint doesn't define this
 $pt-dark-outline-color: rgba(bp.$blue5, 0.6);

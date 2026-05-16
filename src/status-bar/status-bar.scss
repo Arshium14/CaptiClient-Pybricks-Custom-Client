@@ -7,14 +7,28 @@
 @use '../variables' as pb;
 
 .pb-status-bar {
-    background-color: pb.$pybricks-blue;
+    background-color: pb.$pybricks-green;
     min-height: pb.$status-bar-height;
     max-height: pb.$status-bar-height;
-    width: 100vw;
-    padding-inline: 5px;
+    width: calc(100vw - 20px);
+    margin: 0 bp.$pt-grid-size bp.$pt-grid-size;
+    padding-inline: bp.$pt-grid-size;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(pb.$pybricks-green, 0.18);
+    color: #ffffff;
+
+    .#{bp.$ns}-button.#{bp.$ns}-minimal,
+    .#{bp.$ns}-icon {
+        color: #ffffff;
+    }
+
+    .#{bp.$ns}-button.#{bp.$ns}-minimal:hover {
+        background: rgba(255, 255, 255, 0.16);
+        color: #ffffff;
+    }
 
     &-group {
         display: flex;
@@ -30,7 +44,7 @@
 }
 
 .pb-battery-indicator-body {
-    border-radius: 3px;
+    border-radius: 999px;
     border: 2px solid bp.$pt-text-color;
     background-color: bp.$pt-text-color;
     width: 30px;
@@ -42,12 +56,12 @@
 
 .pb-battery-indicator-body .#{bp.$ns}-progress-bar,
 .pb-battery-indicator-body .#{bp.$ns}-progress-meter {
-    border-radius: 3px;
+    border-radius: 999px;
 }
 
 .pb-battery-indicator-tip {
-    border-top-right-radius: 1px;
-    border-bottom-right-radius: 1px;
+    border-top-right-radius: 999px;
+    border-bottom-right-radius: 999px;
     border: 1px solid bp.$pt-text-color;
     background-color: bp.$pt-text-color;
     width: 3px;

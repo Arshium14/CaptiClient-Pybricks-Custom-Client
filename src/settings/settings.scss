@@ -4,14 +4,38 @@
 // Custom styling for the settings controls.
 
 @use '@blueprintjs/core/lib/scss/variables' as bp;
+@use '../variables' as pb;
 
 .pb-settings {
     overflow-y: auto;
     padding: bp.$pt-grid-size;
+    color: pb.$pybricks-text;
+
+    .#{bp.$ns}-dark & {
+        color: pb.$pybricks-dark-text;
+    }
 
     .#{bp.$ns}-control-group {
         .#{bp.$ns}-button {
             margin-bottom: 3px;
+
+            .#{bp.$ns}-dark & {
+                background: pb.$pybricks-dark-panel-2;
+                color: pb.$pybricks-dark-text;
+
+                .#{bp.$ns}-icon,
+                svg,
+                svg * {
+                    color: pb.$pybricks-mint;
+                    fill: currentColor;
+                    stroke: currentColor;
+                }
+
+                &:hover {
+                    background: pb.$pybricks-dark-border;
+                    color: pb.$pybricks-mint;
+                }
+            }
         }
 
         .#{bp.$ns}-input-group {
@@ -21,5 +45,19 @@
 
     & .#{bp.$ns}-control {
         max-width: bp.$pt-grid-size * 20;
+    }
+
+    .#{bp.$ns}-form-helper-text,
+    .#{bp.$ns}-text-muted {
+        .#{bp.$ns}-dark & {
+            color: pb.$pybricks-dark-muted;
+        }
+    }
+
+    a,
+    .#{bp.$ns}-anchor-button {
+        .#{bp.$ns}-dark & {
+            color: pb.$pybricks-mint;
+        }
     }
 }

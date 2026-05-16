@@ -10,6 +10,18 @@
             "message": "Welcome to {appName}.",
             "action": "Click {next} to discover key features."
         },
+        "captiClientInfo": {
+            "message": "Click the {icon} CaptiClient info button to see what CaptiClient adds, how it relates to Pybricks, and the license/attribution notes."
+        },
+        "home": {
+            "message": "Home brings recent programs, saved programs, and quick creation into one place. Click the {icon} button to create a normal local program."
+        },
+        "coop": {
+            "message": "Co-op Rooms let teammates share room programs. Start or join a room, create a room program, then select it like a shared file."
+        },
+        "jerryAi": {
+            "message": "Jerry AI can read the current editor code, explain terminal output, and insert generated code when you choose to use it."
+        },
         "newFile": {
             "message": "Click the {icon} button to create a new program."
         },

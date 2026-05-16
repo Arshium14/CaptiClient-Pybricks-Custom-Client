@@ -1,0 +1,214 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 The Pybricks Authors
+
+@use '@blueprintjs/core/lib/scss/variables' as bp;
+@use '../variables' as pb;
+
+.pb-ai-open-button.#{bp.$ns}-button {
+    min-height: 36px;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    background: pb.$pybricks-green !important;
+    font-weight: 900;
+
+    &:hover {
+        background: pb.$pybricks-green-2 !important;
+        color: #ffffff !important;
+    }
+
+    .#{bp.$ns}-button-text,
+    .#{bp.$ns}-icon,
+    svg,
+    svg * {
+        color: #ffffff !important;
+        fill: currentColor !important;
+        stroke: currentColor !important;
+    }
+}
+
+.pb-ai-dialog {
+    width: min(560px, calc(100vw - 32px));
+
+    .#{bp.$ns}-dialog-body {
+        display: flex;
+        flex-direction: column;
+        gap: bp.$pt-grid-size;
+    }
+}
+
+.pb-ai-key-add {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: bp.$pt-grid-size * 0.7;
+}
+
+.pb-ai-key-list {
+    display: flex;
+    flex-direction: column;
+    gap: bp.$pt-grid-size * 0.6;
+    margin-top: bp.$pt-grid-size * 0.8;
+}
+
+.pb-ai-key-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: bp.$pt-grid-size * 0.6;
+}
+
+.pb-ai-key-chip {
+    display: flex;
+    min-width: 0;
+    min-height: 34px;
+    align-items: center;
+    justify-content: space-between;
+    gap: bp.$pt-grid-size;
+    padding: 7px 10px;
+    border: 1px solid rgba(pb.$pybricks-green, 0.14);
+    border-radius: 10px;
+    background: #f7fbf8;
+    color: pb.$pybricks-text;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &.pb-active,
+    &:hover {
+        border-color: rgba(pb.$pybricks-green, 0.28);
+        background: rgba(pb.$pybricks-mint, 0.36);
+        color: pb.$pybricks-green;
+    }
+
+    span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    small {
+        flex: 0 0 auto;
+        color: pb.$pybricks-muted;
+        font-size: 0.72rem;
+    }
+
+    .#{bp.$ns}-dark & {
+        border-color: rgba(pb.$pybricks-mint, 0.16);
+        background: pb.$pybricks-dark-panel-2;
+        color: pb.$pybricks-dark-text;
+
+        &.pb-active,
+        &:hover {
+            border-color: rgba(pb.$pybricks-mint, 0.32);
+            background: pb.$pybricks-dark-border;
+            color: pb.$pybricks-mint;
+        }
+
+        small {
+            color: pb.$pybricks-dark-muted;
+        }
+    }
+}
+
+.pb-ai-key-empty {
+    color: pb.$pybricks-muted;
+    font-size: 0.84rem;
+
+    .#{bp.$ns}-dark & {
+        color: pb.$pybricks-dark-muted;
+    }
+}
+
+.pb-ai-messages {
+    display: flex;
+    max-height: 320px;
+    flex-direction: column;
+    gap: bp.$pt-grid-size * 0.8;
+    overflow-y: auto;
+    padding: bp.$pt-grid-size;
+    border: 1px solid pb.$pybricks-border;
+    border-radius: 14px;
+    background: #f7fbf8;
+
+    .#{bp.$ns}-dark & {
+        border-color: pb.$pybricks-dark-border;
+        background: pb.$pybricks-dark-panel-2;
+    }
+}
+
+.pb-ai-message,
+.pb-ai-error {
+    padding: 10px 12px;
+    border-radius: 12px;
+    user-select: text;
+}
+
+.pb-ai-message-text {
+    white-space: pre-wrap;
+}
+
+.pb-ai-message-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: bp.$pt-grid-size * 0.7;
+}
+
+.pb-ai-message-user {
+    align-self: flex-end;
+    max-width: 86%;
+    background: pb.$pybricks-green;
+    color: #ffffff;
+}
+
+.pb-ai-message-model {
+    align-self: flex-start;
+    max-width: 92%;
+    background: pb.$pybricks-panel;
+    color: pb.$pybricks-text;
+    box-shadow: inset 0 0 0 1px rgba(pb.$pybricks-green, 0.12);
+
+    .#{bp.$ns}-dark & {
+        background: pb.$pybricks-dark-panel;
+        color: pb.$pybricks-dark-text;
+        box-shadow: inset 0 0 0 1px rgba(pb.$pybricks-mint, 0.16);
+    }
+}
+
+.pb-ai-error {
+    background: rgba(bp.$red4, 0.12);
+    color: bp.$red2;
+}
+
+.pb-ai-context-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: bp.$pt-grid-size * 0.7;
+    margin-bottom: bp.$pt-grid-size * 0.8;
+}
+
+.pb-ai-context-chip {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: bp.$pt-grid-size * 0.5;
+    padding: 2px 4px 2px 10px;
+    border: 1px solid rgba(pb.$pybricks-green, 0.18);
+    border-radius: 999px;
+    background: rgba(pb.$pybricks-mint, 0.32);
+    color: pb.$pybricks-green;
+    font-size: 0.82rem;
+    font-weight: 700;
+
+    span {
+        overflow: hidden;
+        max-width: 220px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .#{bp.$ns}-dark & {
+        border-color: rgba(pb.$pybricks-mint, 0.22);
+        background: pb.$pybricks-dark-panel-2;
+        color: pb.$pybricks-mint;
+    }
+}

@@ -4,8 +4,8 @@ import docsPackage from '@pybricks/ide-docs/package.json';
 
 // Definitions for compile-time UI settings.
 
-/** The official Pybricks blue color. */
-export const pybricksBlue = '#0088ce';
+/** The primary Pybricks UI color. */
+export const pybricksBlue = '#338e7f';
 
 /** Time in milliseconds before showing tooltip popover. */
 export const tooltipDelay = 1000;

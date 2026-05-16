@@ -592,7 +592,7 @@ module.exports = function (webpackEnv) {
         outDirectory: pyodideStaticPath,
         packageIndexUrl: '',
       }),
-      new LicensePlugin(require('./licenses')),
+      isEnvProduction && new LicensePlugin(require('./licenses')),
       new MonacoWebpackPlugin({
         languages: ['python'],
         filename: 'static/js/[name].worker.[contenthash].js',

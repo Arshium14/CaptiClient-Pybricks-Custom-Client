@@ -6,29 +6,21 @@
 @use '@blueprintjs/core/lib/scss/variables' as bp;
 @use '../variables.scss' as pb;
 
-// add "BETA" watermark
-
-.pb-beta .editor-scrollable::after {
-    content: '';
-    background: url('./beta.svg');
-    opacity: 1;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    position: absolute;
-    pointer-events: none;
-}
-
 .pb-editor {
     display: flex;
     flex-direction: column;
 
     &-tablist {
         flex: none;
-        padding: bp.$pt-grid-size * 0.3;
+        padding: bp.$pt-grid-size * 0.6;
         overflow-x: auto;
-        @include pb.background-contrast(6%);
+        background: #f7fbf8;
+        border-bottom: 1px solid pb.$pybricks-border;
+
+        .#{bp.$ns}-dark & {
+            background: pb.$pybricks-dark-panel-2;
+            border-bottom-color: pb.$pybricks-dark-border;
+        }
 
         .#{bp.$ns}-tab-list > * {
             padding-left: bp.$pt-grid-size * 1.5;
@@ -40,7 +32,8 @@
 
         &-tab {
             padding-right: bp.$pt-grid-size * 0.5;
-            border-right: 1px solid bp.$pt-divider-black;
+            border-right: 1px solid pb.$pybricks-border;
+            border-radius: bp.$pt-grid-size * 1.2;
             max-width: bp.$pt-grid-size * 15;
             display: flex;
             flex-direction: row;
@@ -48,7 +41,7 @@
             align-items: center;
 
             .#{bp.$ns}-dark & {
-                border-right-color: bp.$pt-dark-divider-white;
+                border-right-color: pb.$pybricks-dark-border;
             }
 
             & .#{bp.$ns}-text-overflow-ellipsis {
@@ -61,10 +54,108 @@
     &-tabpanel {
         min-height: 0;
         flex: 1 1 auto;
+        background: pb.$pybricks-panel;
+
+        .#{bp.$ns}-dark & {
+            background: pb.$pybricks-dark-panel;
+        }
+    }
+
+    &-coop-bar {
+        display: flex;
+        flex: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: bp.$pt-grid-size;
+        padding: 6px bp.$pt-grid-size;
+        border-bottom: 1px solid pb.$pybricks-border;
+        background: rgba(pb.$pybricks-mint, 0.32);
+        color: pb.$pybricks-text;
+        font-size: 0.78rem;
+
+        > div:first-child {
+            display: flex;
+            min-width: 0;
+            align-items: center;
+            gap: bp.$pt-grid-size * 0.7;
+        }
+
+        strong {
+            color: pb.$pybricks-green;
+        }
+
+        span {
+            color: pb.$pybricks-muted;
+        }
+
+        &.pb-connected span {
+            color: pb.$pybricks-green;
+        }
+
+        &.pb-disconnected span {
+            color: bp.$orange3;
+        }
+
+        .#{bp.$ns}-dark & {
+            border-bottom-color: pb.$pybricks-dark-border;
+            background: rgba(pb.$pybricks-mint, 0.1);
+            color: pb.$pybricks-dark-text;
+
+            strong,
+            &.pb-connected span {
+                color: pb.$pybricks-mint;
+            }
+
+            span {
+                color: pb.$pybricks-dark-muted;
+            }
+        }
+    }
+
+    &-coop-users {
+        display: flex;
+        min-width: 0;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: bp.$pt-grid-size * 0.5;
+
+        span {
+            display: inline-flex;
+            max-width: 140px;
+            align-items: center;
+            gap: 5px;
+            overflow: hidden;
+            color: pb.$pybricks-text !important;
+            font-weight: 800;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &::before {
+                width: 8px;
+                height: 8px;
+                flex: 0 0 auto;
+                border-radius: 999px;
+                background: var(--pb-coop-user-color);
+                content: '';
+            }
+
+            .#{bp.$ns}-dark & {
+                color: pb.$pybricks-dark-text !important;
+            }
+        }
     }
 
     &-welcome {
         display: none;
+        background:
+            radial-gradient(circle at 50% 45%, rgba(pb.$pybricks-mint, 0.34), transparent 32%),
+            pb.$pybricks-panel;
+
+        .#{bp.$ns}-dark & {
+            background:
+                radial-gradient(circle at 50% 45%, rgba(pb.$pybricks-mint, 0.12), transparent 34%),
+                pb.$pybricks-dark-panel;
+        }
 
         .pb-editor-tabpanel.pb-empty > & {
             display: block;
@@ -96,6 +187,19 @@
 }
 
 .monaco-editor {
+    font-family: 'Google Sans Code', Consolas, monospace;
+
+    .view-line,
+    .view-lines,
+    .margin-view-overlays,
+    .line-numbers,
+    .monaco-mouse-cursor-text,
+    .suggest-widget,
+    .parameter-hints-widget,
+    .find-widget {
+        font-family: 'Google Sans Code', Consolas, monospace !important;
+    }
+
     // override iOS keyboard button position
     & .iPadShowKeyboard {
         right: unset !important;
@@ -111,4 +215,13 @@
     & .overflowingContentWidget {
         z-index: bp.$pt-z-index-overlay - 1;
     }
+}
+
+.yRemoteSelection {
+    background-color: rgba(pb.$pybricks-green, 0.18);
+}
+
+.yRemoteSelectionHead {
+    position: relative;
+    border-left: 2px solid pb.$pybricks-green;
 }

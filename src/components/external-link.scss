@@ -2,9 +2,24 @@
 // Copyright (c) 2021-2022 The Pybricks Authors
 
 @use '@blueprintjs/core/lib/scss/variables' as bp;
+@use '../variables' as pb;
 
 span.pb-external-link {
     white-space: nowrap;
+
+    .#{bp.$ns}-dark & {
+        color: pb.$pybricks-mint;
+    }
+
+    .#{bp.$ns}-icon,
+    svg,
+    svg * {
+        .#{bp.$ns}-dark & {
+            color: pb.$pybricks-mint;
+            fill: currentColor;
+            stroke: currentColor;
+        }
+    }
 }
 
 // override some button magic in case this is used in a button

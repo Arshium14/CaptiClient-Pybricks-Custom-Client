@@ -2,6 +2,7 @@
 // Copyright (c) 2022 The Pybricks Authors
 
 @use '@blueprintjs/core/lib/scss/variables' as bp;
+@use '../variables' as pb;
 
 .pb-explorer {
     min-height: 0;
@@ -12,6 +13,45 @@
     &-header-toolbar {
         display: flex;
         justify-content: flex-end;
+        padding-bottom: bp.$pt-grid-size;
+
+        .#{bp.$ns}-button {
+            color: pb.$pybricks-green;
+            background: #f7fbf8;
+            border-radius: 999px;
+            box-shadow: inset 0 0 0 1px rgba(pb.$pybricks-green, 0.12);
+            transition:
+                background-color 0.18s ease,
+                color 0.18s ease,
+                filter 0.18s ease;
+
+            &:hover,
+            &.#{bp.$ns}-active {
+                background: pb.$pybricks-mint;
+                color: pb.$pybricks-green;
+                filter: brightness(1.01);
+            }
+
+            .#{bp.$ns}-icon,
+            svg,
+            svg * {
+                color: currentColor;
+                fill: currentColor;
+                stroke: currentColor;
+            }
+
+            .#{bp.$ns}-dark & {
+                color: pb.$pybricks-mint;
+                background: pb.$pybricks-dark-panel-2;
+                box-shadow: inset 0 0 0 1px rgba(pb.$pybricks-mint, 0.18);
+
+                &:hover,
+                &.#{bp.$ns}-active {
+                    background: pb.$pybricks-dark-border;
+                    color: pb.$pybricks-mint;
+                }
+            }
+        }
     }
 
     &-file-tree {
@@ -23,9 +63,90 @@
             margin: 2px;
         }
 
+        & .#{bp.$ns}-tree-node-content {
+            border-radius: bp.$pt-grid-size * 1.2;
+            margin-block: 2px;
+
+            &:hover {
+                background: rgba(pb.$pybricks-mint, 0.5);
+            }
+
+            .#{bp.$ns}-dark & {
+                color: pb.$pybricks-dark-text;
+
+                &:hover {
+                    background: pb.$pybricks-dark-panel-2;
+                    color: pb.$pybricks-mint;
+                }
+            }
+        }
+
+        & .#{bp.$ns}-tree-node-selected > .#{bp.$ns}-tree-node-content {
+            background: pb.$pybricks-mint;
+            color: pb.$pybricks-green;
+            font-weight: 800;
+
+            .#{bp.$ns}-dark & {
+                background: rgba(pb.$pybricks-mint, 0.18);
+                color: pb.$pybricks-mint;
+            }
+        }
+
+        & .#{bp.$ns}-tree-node-icon,
+        & .#{bp.$ns}-tree-node-icon svg,
+        & .#{bp.$ns}-tree-node-icon svg * {
+            color: pb.$pybricks-green;
+            fill: currentColor;
+            stroke: currentColor;
+
+            .#{bp.$ns}-dark & {
+                color: pb.$pybricks-mint;
+            }
+        }
+
+        &-action-toolbar {
+            .#{bp.$ns}-button {
+                color: pb.$pybricks-green;
+                background: transparent;
+                border-radius: 999px;
+                transition:
+                    background-color 0.18s ease,
+                    color 0.18s ease;
+
+                &:hover,
+                &.#{bp.$ns}-active {
+                    background: rgba(pb.$pybricks-mint, 0.64);
+                    color: pb.$pybricks-green;
+                }
+
+                .#{bp.$ns}-icon,
+                svg,
+                svg * {
+                    color: currentColor;
+                    fill: currentColor;
+                    stroke: currentColor;
+                }
+
+                .#{bp.$ns}-dark & {
+                    color: pb.$pybricks-mint;
+
+                    &:hover,
+                    &.#{bp.$ns}-active {
+                        background: pb.$pybricks-dark-panel-2;
+                        color: pb.$pybricks-mint;
+                    }
+                }
+            }
+        }
+
         // don't need extra padding around toolbar
         & .#{bp.$ns}-tree-node-secondary-label {
             padding: unset;
+
+            .#{bp.$ns}-dark & {
+                background: rgba(pb.$pybricks-dark-panel, 0.92);
+                border-radius: 999px;
+            }
         }
 
         // fix layout since we are nesting toolbar in button group

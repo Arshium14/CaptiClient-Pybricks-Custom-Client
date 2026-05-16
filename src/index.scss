@@ -46,6 +46,17 @@ body {
     width: 100%;
     height: 100%;
     position: absolute;
+    background: pb.$pybricks-sage;
+    color: pb.$pybricks-text;
+    font-family:
+        'Google Sans Flex',
+        'Roboto Flex',
+        bp.$pt-font-family;
+
+    &.#{bp.$ns}-dark {
+        background: pb.$pybricks-dark-bg;
+        color: pb.$pybricks-dark-text;
+    }
 }
 
 #root {
@@ -76,18 +87,18 @@ body {
     align-items: center;
     padding: bp.$pt-grid-size * 2;
     border-width: 2;
-    border-radius: 2;
+    border-radius: bp.$pt-grid-size * 2;
     border-style: dashed;
-    border-color: bp.$pt-divider-black;
-    background-color: bp.$pt-app-background-color;
+    border-color: pb.$pybricks-border;
+    background-color: #f7fbf8;
     color: bp.$pt-text-color-muted;
     outline: none;
     transition: border 0.24s ease-in-out;
 
     .#{bp.$ns}-dark & {
-        border-color: bp.$pt-dark-divider-white;
-        background-color: bp.$pt-dark-app-background-color;
-        color: bp.$pt-dark-text-color-muted;
+        border-color: pb.$pybricks-dark-border;
+        background-color: pb.$pybricks-dark-panel-2;
+        color: pb.$pybricks-dark-muted;
     }
 }
 
@@ -100,6 +111,8 @@ body {
 .#{bp.$ns}-toast {
     user-select: text;
     max-width: 700px;
+    border-radius: bp.$pt-grid-size * 1.6;
+    box-shadow: 0 8px 32px pb.$pybricks-shadow;
 
     &.#{bp.$ns}-intent-primary {
         background-color: pb.$pybricks-blue;
@@ -116,21 +129,27 @@ body {
 
 .#{bp.$ns}-button {
     user-select: none;
+    border-radius: 999px;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        filter 0.2s ease;
 
     &.#{bp.$ns}-intent-primary {
-        background: pb.$pybricks-blue;
+        background: pb.$pybricks-green;
 
         &.#{bp.$ns}-minimal {
             background: none;
         }
 
         &:hover {
-            background: color.adjust(pb.$pybricks-blue, $lightness: -5%);
+            background: color.adjust(pb.$pybricks-green, $lightness: -5%);
+            filter: brightness(1.03);
         }
 
         &:disabled,
         &.#{bp.$ns}-disabled {
-            background: rgba(pb.$pybricks-blue, 0.5);
+            background: rgba(pb.$pybricks-green, 0.5);
         }
     }
 
@@ -144,6 +163,51 @@ body {
             margin-right: 0px;
         }
     }
+}
+
+.#{bp.$ns}-icon {
+    color: inherit;
+}
+
+.#{bp.$ns}-button:not(.#{bp.$ns}-intent-primary) {
+    color: pb.$pybricks-text;
+
+    .#{bp.$ns}-icon {
+        color: pb.$pybricks-green;
+    }
+
+    &:hover,
+    &.#{bp.$ns}-active {
+        background: rgba(pb.$pybricks-mint, 0.48);
+        color: pb.$pybricks-green;
+
+        .#{bp.$ns}-icon {
+            color: pb.$pybricks-green;
+        }
+    }
+
+    .#{bp.$ns}-dark & {
+        color: pb.$pybricks-dark-text;
+
+        .#{bp.$ns}-icon {
+            color: pb.$pybricks-mint;
+        }
+
+        &:hover,
+        &.#{bp.$ns}-active {
+            background: pb.$pybricks-dark-panel-2;
+            color: pb.$pybricks-mint;
+
+            .#{bp.$ns}-icon {
+                color: pb.$pybricks-mint;
+            }
+        }
+    }
+}
+
+.#{bp.$ns}-button.#{bp.$ns}-intent-primary,
+.#{bp.$ns}-button.#{bp.$ns}-intent-primary .#{bp.$ns}-icon {
+    color: #ffffff;
 }
 
 a.#{bp.$ns}-button {
@@ -188,8 +252,67 @@ a.#{bp.$ns}-button {
     gap: bp.$pt-grid-size * 0.5;
 }
 
+.#{bp.$ns}-input,
+.#{bp.$ns}-input-group .#{bp.$ns}-input,
+.#{bp.$ns}-html-select select,
+.#{bp.$ns}-select select {
+    border-radius: 999px;
+
+    .#{bp.$ns}-dark & {
+        background: pb.$pybricks-dark-panel-2;
+        border-color: pb.$pybricks-dark-border;
+        color: pb.$pybricks-dark-text;
+        box-shadow: inset 0 0 0 1px pb.$pybricks-dark-border;
+    }
+}
+
+.#{bp.$ns}-card,
+.#{bp.$ns}-dialog,
+.#{bp.$ns}-popover .#{bp.$ns}-popover-content {
+    border-radius: bp.$pt-grid-size * 2;
+
+    .#{bp.$ns}-dark & {
+        background: pb.$pybricks-dark-panel;
+        border-color: pb.$pybricks-dark-border;
+        color: pb.$pybricks-dark-text;
+    }
+}
+
+.#{bp.$ns}-dialog {
+    box-shadow: 0 8px 32px pb.$pybricks-shadow;
+
+    .#{bp.$ns}-dark & {
+        box-shadow: 0 8px 32px pb.$pybricks-dark-shadow;
+    }
+}
+
+.#{bp.$ns}-popover .#{bp.$ns}-popover-content {
+    color: pb.$pybricks-text;
+    background: pb.$pybricks-panel;
+    box-shadow: 0 8px 32px pb.$pybricks-shadow;
+
+    .#{bp.$ns}-dark & {
+        color: pb.$pybricks-dark-text;
+        background: pb.$pybricks-dark-panel;
+        box-shadow: 0 8px 32px pb.$pybricks-dark-shadow;
+    }
+}
+
+.#{bp.$ns}-tooltip .#{bp.$ns}-popover-content {
+    color: #ffffff;
+    background: pb.$pybricks-green;
+}
+
+.__floater.__floater__open {
+    color: pb.$pybricks-text;
+}
+
 .#{bp.$ns}-form-group > .#{bp.$ns}-label {
     font-weight: bolder;
+
+    .#{bp.$ns}-dark & {
+        color: pb.$pybricks-dark-text;
+    }
 }
 
 .#{bp.$ns}-input-group {
@@ -229,31 +352,132 @@ a.#{bp.$ns}-button {
     width: 16px;
 
     &-track {
-        background: bp.$pt-app-background-color;
+        background: pb.$pybricks-sage;
 
         .#{bp.$ns}-dark & {
-            background: bp.$pt-dark-app-background-color;
+            background: pb.$pybricks-dark-bg;
         }
     }
 
     &-thumb {
         border-width: 3px;
         border-style: solid;
-        border-radius: 8px;
-        border-color: bp.$pt-app-background-color;
-        background: bp.$pt-icon-color;
+        border-radius: 999px;
+        border-color: pb.$pybricks-sage;
+        background: pb.$pybricks-green-2;
 
         &:hover {
-            background: bp.$pt-icon-color-hover;
+            background: pb.$pybricks-green;
         }
 
         .#{bp.$ns}-dark & {
-            border-color: bp.$pt-dark-app-background-color;
-            background: bp.$pt-dark-icon-color;
+            border-color: pb.$pybricks-dark-bg;
+            background: pb.$pybricks-dark-muted;
 
             &:hover {
-                background: bp.$pt-dark-icon-color-hover;
+                background: pb.$pybricks-mint;
             }
         }
     }
+}
+
+// Final Blueprint color guardrails. These keep late-loaded Blueprint hover,
+// active, tooltip, tree, and spinner states from falling back to default blue.
+.#{bp.$ns}-button.#{bp.$ns}-intent-primary,
+.#{bp.$ns}-button.#{bp.$ns}-intent-primary:hover,
+.#{bp.$ns}-button.#{bp.$ns}-intent-primary:active,
+.#{bp.$ns}-button.#{bp.$ns}-intent-primary.#{bp.$ns}-active {
+    background: pb.$pybricks-green !important;
+    background-color: pb.$pybricks-green !important;
+    color: #ffffff !important;
+}
+
+.#{bp.$ns}-button.#{bp.$ns}-intent-primary:hover,
+.#{bp.$ns}-button.#{bp.$ns}-intent-primary:active,
+.#{bp.$ns}-button.#{bp.$ns}-intent-primary.#{bp.$ns}-active {
+    background: pb.$pybricks-green-2 !important;
+    background-color: pb.$pybricks-green-2 !important;
+}
+
+.#{bp.$ns}-button.#{bp.$ns}-minimal.#{bp.$ns}-intent-primary,
+.#{bp.$ns}-button.#{bp.$ns}-minimal.#{bp.$ns}-intent-primary:hover,
+.#{bp.$ns}-button.#{bp.$ns}-minimal.#{bp.$ns}-intent-primary:active,
+.#{bp.$ns}-button.#{bp.$ns}-minimal.#{bp.$ns}-intent-primary.#{bp.$ns}-active,
+.#{bp.$ns}-button:not([class*='#{bp.$ns}-intent-']):hover,
+.#{bp.$ns}-button:not([class*='#{bp.$ns}-intent-']):active,
+.#{bp.$ns}-button:not([class*='#{bp.$ns}-intent-']).#{bp.$ns}-active {
+    background: rgba(pb.$pybricks-mint, 0.58) !important;
+    background-color: rgba(pb.$pybricks-mint, 0.58) !important;
+    color: pb.$pybricks-green !important;
+}
+
+.#{bp.$ns}-dark .#{bp.$ns}-button:not([class*='#{bp.$ns}-intent-']):hover,
+.#{bp.$ns}-dark .#{bp.$ns}-button:not([class*='#{bp.$ns}-intent-']):active,
+.#{bp.$ns}-dark .#{bp.$ns}-button:not([class*='#{bp.$ns}-intent-']).#{bp.$ns}-active {
+    background: pb.$pybricks-dark-panel-2 !important;
+    background-color: pb.$pybricks-dark-panel-2 !important;
+    color: pb.$pybricks-mint !important;
+}
+
+.#{bp.$ns}-button .#{bp.$ns}-icon,
+.#{bp.$ns}-button:hover .#{bp.$ns}-icon,
+.#{bp.$ns}-button:active .#{bp.$ns}-icon,
+.#{bp.$ns}-button.#{bp.$ns}-active .#{bp.$ns}-icon,
+.#{bp.$ns}-tab .#{bp.$ns}-icon,
+.#{bp.$ns}-tab:hover .#{bp.$ns}-icon,
+.#{bp.$ns}-tab[aria-selected='true'] .#{bp.$ns}-icon {
+    color: currentColor !important;
+}
+
+.#{bp.$ns}-tab[aria-selected='true'],
+.#{bp.$ns}-tab:not([aria-disabled='true']):hover {
+    color: pb.$pybricks-green !important;
+}
+
+.#{bp.$ns}-tab[aria-selected='true'] svg,
+.#{bp.$ns}-tab[aria-selected='true'] svg *,
+.#{bp.$ns}-tab:hover svg,
+.#{bp.$ns}-tab:hover svg *,
+.#{bp.$ns}-button:hover svg,
+.#{bp.$ns}-button:hover svg * {
+    fill: currentColor !important;
+    stroke: currentColor !important;
+}
+
+.#{bp.$ns}-tree-node-selected > .#{bp.$ns}-tree-node-content,
+.#{bp.$ns}-tree-node-selected > .#{bp.$ns}-tree-node-content:hover {
+    background: pb.$pybricks-mint !important;
+    color: pb.$pybricks-green !important;
+}
+
+.#{bp.$ns}-dark .#{bp.$ns}-tree-node,
+.#{bp.$ns}-dark .#{bp.$ns}-tree-node-content {
+    color: pb.$pybricks-dark-text;
+}
+
+.#{bp.$ns}-dark .#{bp.$ns}-tree-node-content:hover {
+    background: pb.$pybricks-dark-panel-2 !important;
+    color: pb.$pybricks-mint !important;
+}
+
+.#{bp.$ns}-dark .#{bp.$ns}-tree-node-selected > .#{bp.$ns}-tree-node-content,
+.#{bp.$ns}-dark .#{bp.$ns}-tree-node-selected > .#{bp.$ns}-tree-node-content:hover {
+    background: rgba(pb.$pybricks-mint, 0.18) !important;
+    color: pb.$pybricks-mint !important;
+}
+
+.#{bp.$ns}-tooltip.#{bp.$ns}-intent-primary .#{bp.$ns}-popover-content,
+.#{bp.$ns}-tooltip .#{bp.$ns}-popover-content {
+    background: pb.$pybricks-green !important;
+    color: #ffffff !important;
+}
+
+.#{bp.$ns}-tooltip.#{bp.$ns}-intent-primary .#{bp.$ns}-popover-arrow-fill,
+.#{bp.$ns}-tooltip .#{bp.$ns}-popover-arrow-fill {
+    fill: pb.$pybricks-green !important;
+}
+
+.#{bp.$ns}-spinner.#{bp.$ns}-intent-primary .#{bp.$ns}-spinner-head,
+.#{bp.$ns}-button-spinner .#{bp.$ns}-spinner-head {
+    stroke: pb.$pybricks-green !important;
 }
