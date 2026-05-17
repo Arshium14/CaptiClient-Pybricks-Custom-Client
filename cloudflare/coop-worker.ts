@@ -53,6 +53,17 @@ function jsonResponse(value: unknown, init: ResponseInit = {}): Response {
     return new Response(JSON.stringify(value), { ...init, headers });
 }
 
+function optionsResponse(): Response {
+    return new Response(null, {
+        status: 204,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+        },
+    });
+}
+
 function textResponse(value: string, init: ResponseInit = {}): Response {
     const headers = new Headers(init.headers);
     headers.set('Access-Control-Allow-Origin', '*');
@@ -98,7 +109,7 @@ async function routeToRoom(request: Request, env: Env): Promise<Response> {
 export default {
     async fetch(request: Request, env: Env): Promise<Response> {
         if (request.method === 'OPTIONS') {
-            return jsonResponse(null, { status: 204 });
+            return optionsResponse();
         }
 
         try {
@@ -124,7 +135,7 @@ export class CoopRoom {
         const url = new URL(request.url);
 
         if (request.method === 'OPTIONS') {
-            return jsonResponse(null, { status: 204 });
+            return optionsResponse();
         }
 
         if (request.headers.get('Upgrade') === 'websocket') {
