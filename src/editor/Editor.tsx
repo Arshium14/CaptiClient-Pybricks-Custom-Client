@@ -1155,12 +1155,14 @@ const Editor: React.FunctionComponent = () => {
     }, [editor, fileName]);
 
     return (
-        <div className="pb-editor">
+        <div className={classNames('pb-editor', isEmpty && 'pb-empty')}>
             <EditorTabs onChange={() => editor?.focus()} />
-            <EditorPaletteSelect
-                paletteId={editorPaletteId}
-                onChange={setEditorPaletteId}
-            />
+            {!isEmpty && (
+                <EditorPaletteSelect
+                    paletteId={editorPaletteId}
+                    onChange={setEditorPaletteId}
+                />
+            )}
             {coopRoomId && coopUpdate && (
                 <CoopBar roomId={coopRoomId} update={coopUpdate} />
             )}

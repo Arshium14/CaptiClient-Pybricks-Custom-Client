@@ -2,6 +2,8 @@
 
 import classNames from 'classnames';
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { hubStartTelemetryMonitor } from '../hub/actions';
 import { HubRuntimeState } from '../hub/reducers';
 import { useSelector } from '../reducers';
 
@@ -12,22 +14,29 @@ function formatDegrees(value?: number): string {
 }
 
 const HubTelemetryStrip: React.FunctionComponent = () => {
+    const dispatch = useDispatch();
     const telemetry = useSelector((s) => s.hub.telemetry);
     const runtime = useSelector((s) => s.hub.runtime);
     const hasTelemetry = telemetry.lastUpdated !== null;
-    const connected = runtime !== HubRuntimeState.Disconnected;
+    const canStartTelemetry =
+        runtime !== HubRuntimeState.Disconnected &&
+        runtime !== HubRuntimeState.Loading &&
+        runtime !== HubRuntimeState.Running &&
+        runtime !== HubRuntimeState.StartingRepl &&
+        runtime !== HubRuntimeState.StoppingUserProgram;
+    const telemetryTitle = hasTelemetry
+        ? 'Live hub telemetry'
+        : runtime === HubRuntimeState.Disconnected
+          ? 'Connect a hub to view telemetry'
+          : canStartTelemetry
+            ? 'Start telemetry when you want live hub values'
+            : 'Stop the current program before starting telemetry';
 
     return (
         <div
             className="pb-toolbar-telemetry"
             aria-label="Hub telemetry"
-            title={
-                hasTelemetry
-                    ? 'Live hub telemetry'
-                    : connected
-                      ? 'Telemetry starts automatically when the hub is idle'
-                      : 'Connect a hub to view telemetry'
-            }
+            title={telemetryTitle}
         >
             <div className="pb-toolbar-telemetry-ports" aria-label="Motor angles">
                 {portLabels.map((label, index) => {
@@ -71,6 +80,14 @@ const HubTelemetryStrip: React.FunctionComponent = () => {
                     </span>
                 </div>
             </div>
+            <button
+                className="pb-toolbar-telemetry-start"
+                disabled={!canStartTelemetry}
+                onClick={() => dispatch(hubStartTelemetryMonitor())}
+                type="button"
+            >
+                {hasTelemetry ? 'Restart' : 'Start'}
+            </button>
         </div>
     );
 };

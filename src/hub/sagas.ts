@@ -503,25 +503,12 @@ function* canStartTelemetryMonitor(): SagaGenerator<boolean> {
     );
 }
 
-function* handleMaybeStartTelemetryMonitor(
+function handleTelemetryStatusReport(
     action: ReturnType<typeof didReceiveStatusReport>,
-): Generator {
+): void {
     if (action.statusFlags & statusToFlag(Status.UserProgramRunning)) {
         telemetryMonitorActive = false;
         telemetryMonitorStartInFlight = false;
-        return;
-    }
-
-    telemetryMonitorActive = false;
-
-    if (telemetryMonitorStartInFlight) {
-        return;
-    }
-
-    yield* delay(250);
-
-    if (yield* canStartTelemetryMonitor()) {
-        yield* put(hubStartTelemetryMonitor());
     }
 }
 
@@ -692,7 +679,7 @@ function* handleStopUserProgram(): Generator {
 export default function* (): Generator {
     yield* takeEvery(downloadAndRun, handleDownloadAndRun);
     yield* takeEvery(hubStartRepl, handleHubStartRepl);
-    yield* takeEvery(didReceiveStatusReport, handleMaybeStartTelemetryMonitor);
+    yield* takeEvery(didReceiveStatusReport, handleTelemetryStatusReport);
     yield* takeEvery(didReceiveWriteStdout, handleTelemetryPlaceholderStdout);
     yield* takeEvery(hubStartTelemetryMonitor, handleStartTelemetryMonitor);
     yield* takeEvery(hubStopUserProgram, handleStopUserProgram);

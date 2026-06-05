@@ -53,7 +53,7 @@
         }
 
         &.pb-align-right {
-            margin-left: auto;
+            margin-left: 0;
         }
     }
 
@@ -204,6 +204,37 @@
         align-items: baseline;
         gap: 2px;
         font-variant-numeric: tabular-nums;
+    }
+
+    &-telemetry-start {
+        min-height: 30px;
+        padding: 0 bp.$pt-grid-size * 0.8;
+        border: 1px solid rgba(0, 0, 0, 0.18);
+        border-radius: 999px;
+        background: pb.$pybricks-green;
+        color: #ffffff;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+
+        &:hover:not(:disabled) {
+            background: darken(pb.$pybricks-green, 6%);
+        }
+
+        &:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .#{bp.$ns}-dark & {
+            border-color: rgba(255, 255, 255, 0.16);
+            background: pb.$pybricks-mint;
+            color: pb.$pybricks-dark-bg;
+
+            &:hover:not(:disabled) {
+                background: lighten(pb.$pybricks-mint, 4%);
+            }
+        }
     }
 
     .#{bp.$ns}-button {

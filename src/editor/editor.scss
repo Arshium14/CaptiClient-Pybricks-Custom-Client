@@ -53,6 +53,10 @@
         }
     }
 
+    &.pb-empty &-tablist {
+        padding-right: bp.$pt-grid-size * 0.6;
+    }
+
     &-palette {
         display: flex;
         position: absolute;
