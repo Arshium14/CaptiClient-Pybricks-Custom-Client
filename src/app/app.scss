@@ -29,12 +29,12 @@
 
     &-terminal {
         height: 100%;
-        padding: bp.$pt-grid-size;
+        padding: bp.$pt-grid-size * 0.6;
         background-color: pb.$pybricks-panel;
         border-radius: bp.$pt-grid-size * 1.6;
 
         .#{bp.$ns}-dark & {
-            background-color: pb.$pybricks-dark-panel;
+            background-color: pb.$pybricks-dark-bg;
             border: 1px solid pb.$pybricks-dark-border;
         }
     }
@@ -69,6 +69,12 @@
 
         .#{bp.$ns}-dark & {
             background-color: pb.$pybricks-dark-bg;
+        }
+
+        > .splitter-layout {
+            inset: bp.$pt-grid-size;
+            width: auto;
+            height: auto;
         }
     }
 }

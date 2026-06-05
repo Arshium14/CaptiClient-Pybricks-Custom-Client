@@ -5,11 +5,18 @@
 @use '../variables' as pb;
 
 .pb-ai-open-button.#{bp.$ns}-button {
-    min-height: 36px;
+    width: 60px;
+    min-width: 60px;
+    height: 60px;
+    min-height: 60px;
+    justify-content: center;
+    padding: 0 !important;
     border-radius: 10px !important;
     color: #ffffff !important;
     background: pb.$pybricks-green !important;
+    font-size: 1.35rem;
     font-weight: 900;
+    line-height: 1;
 
     &:hover {
         background: pb.$pybricks-green-2 !important;

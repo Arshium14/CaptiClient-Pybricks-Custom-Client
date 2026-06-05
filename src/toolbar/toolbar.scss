@@ -77,6 +77,135 @@
         }
     }
 
+    &-telemetry {
+        min-width: 360px;
+        max-width: min(48vw, 680px);
+        display: flex;
+        flex: 1 0 360px;
+        align-items: center;
+        justify-content: center;
+        gap: bp.$pt-grid-size * 0.6;
+        padding: 0 bp.$pt-grid-size * 0.6;
+        color: #4d4d4d;
+        font-size: 0.68rem;
+        line-height: 1.15;
+        white-space: nowrap;
+        border-radius: bp.$pt-grid-size * 1.8;
+
+        .#{bp.$ns}-dark & {
+            color: #e7ecec;
+        }
+    }
+
+    &-telemetry-ports,
+    &-telemetry-hub {
+        min-width: 0;
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: bp.$pt-grid-size * 0.4;
+    }
+
+    &-telemetry-port,
+    &-telemetry-hub {
+        min-height: 30px;
+        border: 1px solid #dddddd;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6) !important;
+
+        .#{bp.$ns}-dark & {
+            border-color: rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.08);
+        }
+    }
+
+    &-telemetry-port {
+        display: inline-grid;
+        flex: 0 0 auto;
+        grid-template-columns: 22px minmax(34px, auto);
+        align-items: center;
+        overflow: hidden;
+        color: #8a8a8a;
+    }
+
+    &-telemetry-port-active {
+        color: #111111;
+
+        .#{bp.$ns}-dark & {
+            color: #ffffff;
+        }
+    }
+
+    &-telemetry-port-label,
+    &-telemetry-hub-icon {
+        height: 100%;
+        min-height: 30px;
+        display: grid;
+        place-items: center;
+        background: pb.$pybricks-green;
+        color: #ffffff;
+        font-weight: 700;
+        letter-spacing: 0;
+
+        .#{bp.$ns}-dark & {
+            background: pb.$pybricks-mint;
+            color: pb.$pybricks-dark-bg;
+        }
+    }
+
+    &-telemetry-port-label {
+        border-radius: 999px 0 0 999px;
+        font-size: 0.72rem;
+    }
+
+    &-telemetry-port-value {
+        padding: 0 bp.$pt-grid-size * 0.6 0 bp.$pt-grid-size * 0.45;
+        font-variant-numeric: tabular-nums;
+    }
+
+    &-telemetry-hub {
+        flex: 0 0 auto;
+        overflow: hidden;
+    }
+
+    &-telemetry-hub-icon {
+        min-width: 42px;
+        padding: 0 bp.$pt-grid-size * 0.5;
+        border-radius: 999px 0 0 999px;
+        background: #f2f2f2;
+        color: #555555;
+        font-size: 0.62rem;
+
+        .#{bp.$ns}-dark & {
+            background: rgba(255, 255, 255, 0.13);
+            color: #e6e6e6;
+        }
+    }
+
+    &-telemetry-hub-values {
+        display: flex;
+        align-items: center;
+        gap: bp.$pt-grid-size * 0.45;
+        padding: 0 bp.$pt-grid-size * 0.7 0 bp.$pt-grid-size * 0.5;
+    }
+
+    &-telemetry-key {
+        color: pb.$pybricks-green;
+        font-weight: 700;
+
+        .#{bp.$ns}-dark & {
+            color: #9de0ad;
+        }
+    }
+
+    &-telemetry-value {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 2px;
+        font-variant-numeric: tabular-nums;
+    }
+
     .#{bp.$ns}-button {
         min-height: 36px;
         border-radius: 10px;
@@ -147,5 +276,33 @@
 
     .#{bp.$ns}-button:not(.#{bp.$ns}-minimal) {
         box-shadow: inset 0 0 0 1px rgba(pb.$pybricks-green, 0.12) !important;
+    }
+
+    @media screen and (max-width: 1180px) {
+        &-telemetry {
+            min-width: 280px;
+            max-width: min(44vw, 520px);
+            justify-content: flex-start;
+            overflow: hidden;
+        }
+
+        &-telemetry-port:nth-child(n + 5) {
+            display: none;
+        }
+    }
+
+    @media screen and (max-width: 920px) {
+        &-telemetry {
+            min-width: 190px;
+            max-width: min(42vw, 320px);
+        }
+
+        &-telemetry-port:nth-child(n + 3) {
+            display: none;
+        }
+
+        &-telemetry-hub-values &-telemetry-value:nth-child(n + 3) {
+            display: none;
+        }
     }
 }

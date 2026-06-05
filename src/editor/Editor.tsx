@@ -6,6 +6,7 @@ import {
     Button,
     Classes,
     ContextMenu,
+    HTMLSelect,
     Menu,
     MenuDivider,
     MenuItem,
@@ -77,14 +78,474 @@ if (module.hot) {
     });
 }
 
-const tomorrowNightEightiesId = 'tomorrow-night-eighties';
+const editorThemeStorageKey = 'capticlient.editor.palette';
+const pybricksDefaultPaletteId = 'pybricks-default';
+const pybricksDefaultLightId = 'pybricks-default-light';
+const pybricksDefaultDarkId = 'pybricks-default-dark';
+
 monaco.editor.defineTheme(
-    tomorrowNightEightiesId,
+    pybricksDefaultLightId,
+    xcodeTheme as monaco.editor.IStandaloneThemeData,
+);
+monaco.editor.defineTheme(
+    pybricksDefaultDarkId,
     tomorrowNightEightiesTheme as monaco.editor.IStandaloneThemeData,
 );
 
-const xcodeId = 'xcode';
-monaco.editor.defineTheme(xcodeId, xcodeTheme as monaco.editor.IStandaloneThemeData);
+type EditorPalette = Readonly<{
+    id: string;
+    label: string;
+    light: PaletteColors;
+    dark: PaletteColors;
+}>;
+
+type PaletteColors = Readonly<{
+    background: string;
+    foreground: string;
+    keyword: string;
+    module: string;
+    function: string;
+    constant: string;
+    number: string;
+    string: string;
+    escape: string;
+    comment: string;
+    lineNumber: string;
+    activeLineNumber: string;
+    selection: string;
+    inactiveSelection: string;
+    lineHighlight: string;
+    indent: string;
+    ruler: string;
+    bracket1: string;
+    bracket2: string;
+    bracket3: string;
+}>;
+
+const editorPalettes: readonly EditorPalette[] = [
+    {
+        id: pybricksDefaultPaletteId,
+        label: 'Pybricks Default',
+        light: {
+            background: 'FFFFFF',
+            foreground: '000000',
+            keyword: 'A90D91',
+            module: '1C00CF',
+            function: '3F6E75',
+            constant: '1C00CF',
+            number: '1C00CF',
+            string: 'C41A16',
+            escape: 'C41A16',
+            comment: '008000',
+            lineNumber: '237893',
+            activeLineNumber: '000000',
+            selection: 'B5D5FF',
+            inactiveSelection: 'B5D5FF66',
+            lineHighlight: '00000000',
+            indent: 'D3D3D3',
+            ruler: 'D3D3D3',
+            bracket1: '0431FA',
+            bracket2: '319331',
+            bracket3: '7B3814',
+        },
+        dark: {
+            background: '2D2D2D',
+            foreground: 'CCCCCC',
+            keyword: 'CC99CC',
+            module: '6699CC',
+            function: 'F99157',
+            constant: '99CC99',
+            number: 'F99157',
+            string: '99CC99',
+            escape: 'F99157',
+            comment: '999999',
+            lineNumber: '999999',
+            activeLineNumber: 'CCCCCC',
+            selection: '515151',
+            inactiveSelection: '51515188',
+            lineHighlight: '393939',
+            indent: '515151',
+            ruler: '515151',
+            bracket1: 'FFD700',
+            bracket2: 'DA70D6',
+            bracket3: '179FFF',
+        },
+    },
+    {
+        id: 'capticlient-mint',
+        label: 'CaptiClient Mint',
+        light: {
+            background: 'F8FFF0',
+            foreground: '594F4F',
+            keyword: '45ADA8',
+            module: '547980',
+            function: '45ADA8',
+            constant: '594F4F',
+            number: '547980',
+            string: '45ADA8',
+            escape: '9DE0AD',
+            comment: '547980',
+            lineNumber: '8FA5A6',
+            activeLineNumber: '45ADA8',
+            selection: '9DE0AD66',
+            inactiveSelection: '9DE0AD33',
+            lineHighlight: 'E5FCC280',
+            indent: '54798029',
+            ruler: '5479802E',
+            bracket1: '45ADA8',
+            bracket2: '9DE0AD',
+            bracket3: '594F4F',
+        },
+        dark: {
+            background: '332D2D',
+            foreground: 'E5FCC2',
+            keyword: '9DE0AD',
+            module: '45ADA8',
+            function: '9DE0AD',
+            constant: '9DE0AD',
+            number: '9DE0AD',
+            string: '45ADA8',
+            escape: 'E5FCC2',
+            comment: '9DE0AD',
+            lineNumber: '91A5A2',
+            activeLineNumber: '9DE0AD',
+            selection: '45ADA866',
+            inactiveSelection: '45ADA833',
+            lineHighlight: '54798040',
+            indent: '9DE0AD24',
+            ruler: '9DE0AD26',
+            bracket1: '9DE0AD',
+            bracket2: '45ADA8',
+            bracket3: 'E5FCC2',
+        },
+    },
+    {
+        id: 'harbor-sunset',
+        label: 'Retro Sunset',
+        light: {
+            background: 'FBF8F2',
+            foreground: '455054',
+            keyword: 'D45769',
+            module: '308695',
+            function: '308695',
+            constant: 'E69D45',
+            number: 'E69D45',
+            string: 'D45769',
+            escape: 'E69D45',
+            comment: '7F8A87',
+            lineNumber: '9AA39F',
+            activeLineNumber: '308695',
+            selection: '3086954D',
+            inactiveSelection: '30869526',
+            lineHighlight: 'D4CFC966',
+            indent: '45505424',
+            ruler: '45505424',
+            bracket1: 'D45769',
+            bracket2: '308695',
+            bracket3: 'E69D45',
+        },
+        dark: {
+            background: '1E282B',
+            foreground: 'D4CFC9',
+            keyword: 'D45769',
+            module: '55B5BF',
+            function: '55B5BF',
+            constant: 'E69D45',
+            number: 'E69D45',
+            string: 'E27987',
+            escape: 'E69D45',
+            comment: '95A19D',
+            lineNumber: '748186',
+            activeLineNumber: '55B5BF',
+            selection: '30869566',
+            inactiveSelection: '30869533',
+            lineHighlight: '45505466',
+            indent: 'D4CFC924',
+            ruler: 'D4CFC924',
+            bracket1: 'D45769',
+            bracket2: '55B5BF',
+            bracket3: 'E69D45',
+        },
+    },
+    {
+        id: 'arctic-current',
+        label: 'Arctic Current',
+        light: {
+            background: 'F2FBFF',
+            foreground: '015C92',
+            keyword: '015C92',
+            module: '2D82B5',
+            function: '2D82B5',
+            constant: 'FB6602',
+            number: 'FB6602',
+            string: '2D82B5',
+            escape: 'FB6602',
+            comment: '5AA3CC',
+            lineNumber: '88CDF6',
+            activeLineNumber: '015C92',
+            selection: '88CDF666',
+            inactiveSelection: '88CDF633',
+            lineHighlight: 'BCE6FF66',
+            indent: '2D82B52B',
+            ruler: '015C9226',
+            bracket1: '015C92',
+            bracket2: '2D82B5',
+            bracket3: 'FB6602',
+        },
+        dark: {
+            background: '082A3F',
+            foreground: 'BCE6FF',
+            keyword: '88CDF6',
+            module: '56A6D2',
+            function: '88CDF6',
+            constant: 'FB6602',
+            number: 'FB6602',
+            string: 'BCE6FF',
+            escape: 'FB6602',
+            comment: '78B7D6',
+            lineNumber: '5A91B0',
+            activeLineNumber: '88CDF6',
+            selection: '2D82B566',
+            inactiveSelection: '2D82B533',
+            lineHighlight: '015C9252',
+            indent: '88CDF626',
+            ruler: '88CDF624',
+            bracket1: '88CDF6',
+            bracket2: 'BCE6FF',
+            bracket3: 'FB6602',
+        },
+    },
+    {
+        id: 'sherbet-pop',
+        label: 'Fiery Sunset',
+        light: {
+            background: 'FFF8EB',
+            foreground: '44263A',
+            keyword: 'C73866',
+            module: 'FE676E',
+            function: 'FD8F52',
+            constant: 'FD8F52',
+            number: 'FD8F52',
+            string: 'FE676E',
+            escape: 'FFBD71',
+            comment: 'B97871',
+            lineNumber: 'DDA18D',
+            activeLineNumber: 'C73866',
+            selection: 'FE676E55',
+            inactiveSelection: 'FE676E2E',
+            lineHighlight: 'FFDCA266',
+            indent: 'C7386628',
+            ruler: 'C7386624',
+            bracket1: 'C73866',
+            bracket2: 'FD8F52',
+            bracket3: 'FFBD71',
+        },
+        dark: {
+            background: '2C1624',
+            foreground: 'FFDCA2',
+            keyword: 'FE676E',
+            module: 'C73866',
+            function: 'FFBD71',
+            constant: 'FD8F52',
+            number: 'FD8F52',
+            string: 'FFDCA2',
+            escape: 'FFBD71',
+            comment: 'D9908F',
+            lineNumber: 'A66B74',
+            activeLineNumber: 'FE676E',
+            selection: 'C7386666',
+            inactiveSelection: 'C7386633',
+            lineHighlight: '6D2B4052',
+            indent: 'FE676E26',
+            ruler: 'FE676E24',
+            bracket1: 'FE676E',
+            bracket2: 'FD8F52',
+            bracket3: 'FFDCA2',
+        },
+    },
+    {
+        id: 'sage-rose',
+        label: 'Sage Rose',
+        light: {
+            background: 'FFF7F1',
+            foreground: '4F5F54',
+            keyword: 'AE6378',
+            module: '79616F',
+            function: 'D87F81',
+            constant: 'EAB595',
+            number: 'D87F81',
+            string: 'AE6378',
+            escape: 'EAB595',
+            comment: '7E9680',
+            lineNumber: '9CA99D',
+            activeLineNumber: 'AE6378',
+            selection: 'D87F8159',
+            inactiveSelection: 'D87F812E',
+            lineHighlight: 'EAB59542',
+            indent: '79616F28',
+            ruler: '79616F24',
+            bracket1: '7E9680',
+            bracket2: 'AE6378',
+            bracket3: 'EAB595',
+        },
+        dark: {
+            background: '241D22',
+            foreground: 'EAB595',
+            keyword: 'D87F81',
+            module: 'AE6378',
+            function: 'EAB595',
+            constant: '7E9680',
+            number: 'D87F81',
+            string: 'EAB595',
+            escape: 'D87F81',
+            comment: '9FB69F',
+            lineNumber: '87727D',
+            activeLineNumber: 'D87F81',
+            selection: 'AE637866',
+            inactiveSelection: 'AE637833',
+            lineHighlight: '79616F4D',
+            indent: 'EAB59524',
+            ruler: 'EAB59522',
+            bracket1: '7E9680',
+            bracket2: 'D87F81',
+            bracket3: 'EAB595',
+        },
+    },
+    {
+        id: 'kodular-berry',
+        label: 'Berry Burst',
+        light: {
+            background: 'FFF7FC',
+            foreground: '2B193D',
+            keyword: 'F72585',
+            module: '7209B7',
+            function: '4361EE',
+            constant: '3A0CA3',
+            number: '3A0CA3',
+            string: '4CC9F0',
+            escape: 'F9C74F',
+            comment: '7D6B91',
+            lineNumber: 'A895B7',
+            activeLineNumber: 'F72585',
+            selection: 'F7258560',
+            inactiveSelection: 'F725852E',
+            lineHighlight: 'FCE7F3',
+            indent: '7209B72B',
+            ruler: '7209B726',
+            bracket1: 'F72585',
+            bracket2: '7209B7',
+            bracket3: '4361EE',
+        },
+        dark: {
+            background: '1B1028',
+            foreground: 'FCE7F3',
+            keyword: 'F72585',
+            module: 'B5179E',
+            function: '4CC9F0',
+            constant: 'C77DFF',
+            number: 'C77DFF',
+            string: '80FFDB',
+            escape: 'F9C74F',
+            comment: 'B8A4C7',
+            lineNumber: '7F6898',
+            activeLineNumber: 'F72585',
+            selection: 'B5179E66',
+            inactiveSelection: 'B5179E33',
+            lineHighlight: '2B193D',
+            indent: 'F7258526',
+            ruler: 'F7258524',
+            bracket1: 'F72585',
+            bracket2: '4CC9F0',
+            bracket3: 'C77DFF',
+        },
+    },
+];
+
+const defaultEditorPaletteId = 'capticlient-mint';
+
+function editorThemeId(paletteId: string, isDark: boolean): string {
+    if (paletteId === pybricksDefaultPaletteId) {
+        return isDark ? pybricksDefaultDarkId : pybricksDefaultLightId;
+    }
+
+    return `capticlient-${paletteId}-${isDark ? 'dark' : 'light'}`;
+}
+
+function tokenRules(colors: PaletteColors): monaco.editor.ITokenThemeRule[] {
+    return [
+        { token: '', foreground: colors.foreground },
+        { token: 'white', foreground: colors.foreground },
+        { token: 'keyword', foreground: colors.keyword, fontStyle: 'bold' },
+        { token: 'support.module', foreground: colors.module, fontStyle: 'bold' },
+        { token: 'support.function', foreground: colors.function },
+        { token: 'support.constant', foreground: colors.constant, fontStyle: 'bold' },
+        { token: 'identifier', foreground: colors.foreground },
+        { token: 'constant.numeric', foreground: colors.number },
+        { token: 'constant.numeric.bin', foreground: colors.number },
+        { token: 'constant.numeric.oct', foreground: colors.number },
+        { token: 'constant.numeric.hex', foreground: colors.number },
+        { token: 'string', foreground: colors.string, fontStyle: 'bold' },
+        { token: 'string.escape', foreground: colors.escape, fontStyle: 'bold' },
+        { token: 'comment', foreground: colors.comment, fontStyle: 'italic' },
+        { token: 'delimiter', foreground: colors.foreground },
+        { token: 'delimiter.curly', foreground: colors.foreground },
+        { token: 'delimiter.bracket', foreground: colors.foreground },
+        { token: 'delimiter.parenthesis', foreground: colors.foreground },
+        { token: 'tag', foreground: colors.function },
+    ];
+}
+
+function defineEditorTheme(palette: EditorPalette, isDark: boolean): void {
+    const colors = isDark ? palette.dark : palette.light;
+
+    monaco.editor.defineTheme(editorThemeId(palette.id, isDark), {
+        base: isDark ? 'vs-dark' : 'vs',
+        inherit: true,
+        rules: tokenRules(colors),
+        colors: {
+            'editor.background': `#${colors.background}`,
+            'editor.foreground': `#${colors.foreground}`,
+            'editorLineNumber.foreground': `#${colors.lineNumber}`,
+            'editorLineNumber.activeForeground': `#${colors.activeLineNumber}`,
+            'editorCursor.foreground': `#${colors.activeLineNumber}`,
+            'editor.selectionBackground': `#${colors.selection}`,
+            'editor.inactiveSelectionBackground': `#${colors.inactiveSelection}`,
+            'editor.lineHighlightBackground': `#${colors.lineHighlight}`,
+            'editorGutter.background': `#${colors.background}`,
+            'editorIndentGuide.background': `#${colors.indent}`,
+            'editorIndentGuide.activeBackground': `#${colors.activeLineNumber}`,
+            'editorRuler.foreground': `#${colors.ruler}`,
+            'editorBracketHighlight.foreground1': `#${colors.bracket1}`,
+            'editorBracketHighlight.foreground2': `#${colors.bracket2}`,
+            'editorBracketHighlight.foreground3': `#${colors.bracket3}`,
+            'editorBracketHighlight.foreground4': `#${colors.bracket1}`,
+            'editorBracketHighlight.foreground5': `#${colors.bracket2}`,
+            'editorBracketHighlight.foreground6': `#${colors.bracket3}`,
+            'editorBracketHighlight.unexpectedBracket.foreground': `#${colors.string}`,
+        },
+    });
+}
+
+editorPalettes.forEach((palette) => {
+    if (palette.id === pybricksDefaultPaletteId) {
+        return;
+    }
+
+    defineEditorTheme(palette, false);
+    defineEditorTheme(palette, true);
+});
+
+function getStoredEditorPaletteId(): string {
+    const storedPaletteId = localStorage.getItem(editorThemeStorageKey);
+
+    if (storedPaletteId === 'kodular-ocean' || storedPaletteId === 'harbor-sunset') {
+        return defaultEditorPaletteId;
+    }
+
+    return editorPalettes.some((palette) => palette.id === storedPaletteId)
+        ? storedPaletteId ?? defaultEditorPaletteId
+        : defaultEditorPaletteId;
+}
 
 type EditorContextMenuItemProps = Readonly<{
     /** The menu item label. */
@@ -344,6 +805,33 @@ const EditorTabs: React.FunctionComponent<EditorTabsProps> = ({ onChange }) => {
     );
 };
 
+type EditorPaletteSelectProps = Readonly<{
+    paletteId: string;
+    onChange: (paletteId: string) => void;
+}>;
+
+const EditorPaletteSelect: React.FunctionComponent<EditorPaletteSelectProps> = ({
+    paletteId,
+    onChange,
+}) => {
+    return (
+        <div className="pb-editor-palette">
+            <HTMLSelect
+                aria-label="Editor color palette"
+                minimal={true}
+                value={paletteId}
+                onChange={(event) => onChange(event.currentTarget.value)}
+            >
+                {editorPalettes.map((palette) => (
+                    <option key={palette.id} value={palette.id}>
+                        {palette.label}
+                    </option>
+                ))}
+            </HTMLSelect>
+        </div>
+    );
+};
+
 const CoopBar: React.FunctionComponent<
     Readonly<{ roomId: string; update: CoopStatusUpdate }>
 > = ({ roomId, update }) => (
@@ -418,13 +906,16 @@ const Editor: React.FunctionComponent = () => {
     const [coopRoomId, setCoopRoomId] = useState(() => getCoopRoomId());
     const [coopProgramId, setCoopProgramId] = useState(() => getCoopProgramId());
     const [coopUpdate, setCoopUpdate] = useState<CoopStatusUpdate>();
+    const [editorPaletteId, setEditorPaletteId] = useState(getStoredEditorPaletteId);
     const { isDarkMode } = useTernaryDarkMode();
 
     const i18n = useI18n();
 
     useEffect(() => {
-        monaco.editor.setTheme(isDarkMode ? tomorrowNightEightiesId : xcodeId);
-    }, [isDarkMode]);
+        monaco.editor.setTheme(editorThemeId(editorPaletteId, isDarkMode));
+        monaco.editor.remeasureFonts();
+        localStorage.setItem(editorThemeStorageKey, editorPaletteId);
+    }, [editorPaletteId, isDarkMode]);
 
     useEditor(
         editor,
@@ -523,6 +1014,19 @@ const Editor: React.FunctionComponent = () => {
     const fileName = useFileStoragePath(activeFileUuid ?? ('' as UUID));
 
     useEffect(() => {
+        if (!editor || isEmpty) {
+            return undefined;
+        }
+
+        const handle = requestAnimationFrame(() => {
+            editor.layout();
+            editor.render(true);
+        });
+
+        return () => cancelAnimationFrame(handle);
+    }, [activeFileUuid, editor, editorPaletteId, isDarkMode, isEmpty]);
+
+    useEffect(() => {
         const handleRoomChanged = (event: Event): void => {
             const payload = (event as CustomEvent<CoopRoomPayload>).detail;
 
@@ -576,6 +1080,45 @@ const Editor: React.FunctionComponent = () => {
             return undefined;
         }
 
+        const handleShellCommand = (event: Event): void => {
+            const { command } = (event as CustomEvent<{ command: string }>).detail;
+
+            editor.focus();
+
+            switch (command) {
+                case 'undo':
+                    editor.trigger('spike-prime-shell', 'undo', null);
+                    break;
+                case 'redo':
+                    editor.trigger('spike-prime-shell', 'redo', null);
+                    break;
+                case 'focus':
+                    editor.focus();
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        const handleShellFontSize = (event: Event): void => {
+            const { fontSize } = (event as CustomEvent<{ fontSize: number }>).detail;
+
+            editor.updateOptions({ fontSize });
+        };
+
+        window.addEventListener('pb-editor-command', handleShellCommand);
+        window.addEventListener('pb-editor-font-size', handleShellFontSize);
+        return () => {
+            window.removeEventListener('pb-editor-command', handleShellCommand);
+            window.removeEventListener('pb-editor-font-size', handleShellFontSize);
+        };
+    }, [editor]);
+
+    useEffect(() => {
+        if (!editor) {
+            return undefined;
+        }
+
         const handleCodeRequest = (event: Event): void => {
             if (!editor.getModel()) {
                 return;
@@ -614,6 +1157,10 @@ const Editor: React.FunctionComponent = () => {
     return (
         <div className="pb-editor">
             <EditorTabs onChange={() => editor?.focus()} />
+            <EditorPaletteSelect
+                paletteId={editorPaletteId}
+                onChange={setEditorPaletteId}
+            />
             {coopRoomId && coopUpdate && (
                 <CoopBar roomId={coopRoomId} update={coopUpdate} />
             )}

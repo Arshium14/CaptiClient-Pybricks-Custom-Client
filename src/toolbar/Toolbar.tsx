@@ -7,6 +7,7 @@ import { useId } from 'react-aria';
 import AiAssistant from '../ai/AiAssistant';
 import CaptiClientDialog from '../capticlient/CaptiClientDialog';
 import { Toolbar as UtilsToolbar } from '../components/toolbar/Toolbar';
+import HubTelemetryStrip from './HubTelemetryStrip';
 import BluetoothButton from './buttons/bluetooth/BluetoothButton';
 import CaptiClientButton from './buttons/capticlient/CaptiClientButton';
 import ReplButton from './buttons/repl/ReplButton';
@@ -50,6 +51,7 @@ const Toolbar: React.FunctionComponent = () => {
                 <div className="pb-toolbar-wordmark" aria-hidden="true">
                     CAPTICLIENT
                 </div>
+                <HubTelemetryStrip />
                 <AiAssistant />
                 <ButtonGroup className="pb-toolbar-group pb-align-right">
                     <CaptiClientButton

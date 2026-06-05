@@ -19,6 +19,8 @@ import {
     blePybricksServiceDidNotReceiveHubCapabilities,
     blePybricksServiceDidReceiveHubCapabilities,
     didReceiveStatusReport,
+    didReceiveWriteAppData,
+    didReceiveWriteStdout,
 } from '../ble-pybricks-service/actions';
 import {
     FileFormat,
@@ -47,6 +49,12 @@ import {
     hubStartRepl,
     hubStopUserProgram,
 } from './actions';
+import {
+    HubTelemetryState,
+    initialHubTelemetryState,
+    parseHubTelemetryPayload,
+    parseHubTelemetryTextLine,
+} from './telemetry';
 
 /**
  * Describes the state of the MicroPython runtime on the hub.
@@ -425,6 +433,69 @@ const selectedSlot: Reducer<number> = (state = 0, action) => {
     return state;
 };
 
+const telemetry: Reducer<HubTelemetryState> = (
+    state = initialHubTelemetryState,
+    action,
+) => {
+    if (
+        bleDidDisconnectPybricks.matches(action) ||
+        usbDidDisconnectPybricks.matches(action)
+    ) {
+        return initialHubTelemetryState;
+    }
+
+    if (didReceiveWriteAppData.matches(action)) {
+        const event = parseHubTelemetryPayload(action.payload);
+
+        return event ? applyTelemetryEvent(state, event) : state;
+    }
+
+    if (didReceiveWriteStdout.matches(action)) {
+        const chunk = new TextDecoder().decode(action.payload);
+        const lines = `${state.stdoutBuffer}${chunk}`.split(/\r?\n/);
+        const stdoutBuffer = lines.pop() ?? '';
+        let nextState = { ...state, stdoutBuffer };
+
+        for (const line of lines) {
+            const event = parseHubTelemetryTextLine(line);
+
+            if (event) {
+                nextState = applyTelemetryEvent(nextState, event);
+            }
+        }
+
+        return nextState;
+    }
+
+    return state;
+};
+
+function applyTelemetryEvent(
+    state: HubTelemetryState,
+    event: ReturnType<typeof parseHubTelemetryPayload>,
+): HubTelemetryState {
+    if (!event) {
+        return state;
+    }
+
+    if (event.type === 'imu') {
+        return {
+            ...state,
+            imu: event.value,
+            lastUpdated: Date.now(),
+        };
+    }
+
+    return {
+        ...state,
+        motors: {
+            ...state.motors,
+            [event.port]: event.value,
+        },
+        lastUpdated: Date.now(),
+    };
+}
+
 export default combineReducers({
     runtime,
     deviceName,
@@ -443,4 +514,5 @@ export default combineReducers({
     useLegacyMainModule,
     numOfSlots,
     selectedSlot,
+    telemetry,
 });

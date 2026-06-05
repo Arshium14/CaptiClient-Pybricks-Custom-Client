@@ -9,10 +9,12 @@
 .pb-editor {
     display: flex;
     flex-direction: column;
+    position: relative;
 
     &-tablist {
         flex: none;
         padding: bp.$pt-grid-size * 0.6;
+        padding-right: 250px;
         overflow-x: auto;
         background: #f7fbf8;
         border-bottom: 1px solid pb.$pybricks-border;
@@ -47,6 +49,32 @@
             & .#{bp.$ns}-text-overflow-ellipsis {
                 min-width: 0;
                 flex: 1 1 auto;
+            }
+        }
+    }
+
+    &-palette {
+        display: flex;
+        position: absolute;
+        top: bp.$pt-grid-size * 0.6;
+        right: bp.$pt-grid-size;
+        z-index: bp.$pt-z-index-content;
+        align-items: center;
+        gap: bp.$pt-grid-size * 0.6;
+
+        .#{bp.$ns}-html-select select {
+            height: 30px;
+            border: 1px solid rgba(pb.$pybricks-green, 0.24);
+            border-radius: 999px;
+            background: rgba(pb.$pybricks-panel, 0.84);
+            color: pb.$pybricks-green;
+            font-size: 0.78rem;
+            font-weight: 700;
+
+            .#{bp.$ns}-dark & {
+                border-color: rgba(pb.$pybricks-mint, 0.22);
+                background: rgba(pb.$pybricks-dark-panel, 0.92);
+                color: pb.$pybricks-mint;
             }
         }
     }

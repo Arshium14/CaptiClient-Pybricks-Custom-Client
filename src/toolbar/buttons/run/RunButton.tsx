@@ -26,6 +26,9 @@ const RunButton: React.FunctionComponent<RunButtonProps> = ({ id }) => {
 
     const i18n = useI18n();
     const dispatch = useDispatch();
+    const canRun =
+        activeFile !== null &&
+        (runtime === HubRuntimeState.Idle || runtime === HubRuntimeState.Running);
 
     return (
         <ActionButton
@@ -40,7 +43,7 @@ const RunButton: React.FunctionComponent<RunButtonProps> = ({ id }) => {
                     : i18n.translate('tooltip.action', { key: keyboardShortcut })
             }
             icon={icon}
-            enabled={activeFile !== null && runtime === HubRuntimeState.Idle}
+            enabled={canRun}
             showProgress={runtime === HubRuntimeState.Loading}
             progress={downloadProgress === null ? undefined : downloadProgress}
             onAction={() =>

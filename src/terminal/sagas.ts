@@ -26,8 +26,15 @@ import {
     didSendCommand,
     sendWriteStdinCommand,
 } from '../ble-pybricks-service/actions';
-import { checksum, hubDidStartRepl } from '../hub/actions';
+import {
+    checksum,
+    hubDidFailToStartTelemetryMonitor,
+    hubDidStartRepl,
+    hubDidStartTelemetryMonitor,
+    hubStartTelemetryMonitor,
+} from '../hub/actions';
 import { HubRuntimeState } from '../hub/reducers';
+import { parseHubTelemetryTextLine } from '../hub/telemetry';
 import { RootState } from '../reducers';
 import { assert, defined } from '../utils';
 import { TerminalContextValue } from './TerminalContext';
@@ -41,6 +48,73 @@ export type TerminalSagaContext = { terminal: TerminalContextValue };
 const encoder = new TextEncoder();
 const uartDecoder = new TextDecoder();
 const stdoutDecoder = new TextDecoder();
+let stdoutLineBuffer = '';
+let suppressTelemetryStartupStdout = false;
+let hideTelemetryCleanupLines = 0;
+
+function isTelemetryLinePrefix(line: string): boolean {
+    const trimmed = line.trimStart();
+
+    return 'CAPTICLIENT_TELEMETRY'.startsWith(trimmed);
+}
+
+function isHiddenTelemetryStdoutLine(line: string): boolean {
+    if (parseHubTelemetryTextLine(line)) {
+        hideTelemetryCleanupLines = 6;
+        return true;
+    }
+
+    if (hideTelemetryCleanupLines > 0) {
+        const trimmed = line.trim();
+
+        if (
+            trimmed === '' ||
+            trimmed === 'Traceback (most recent call last):' ||
+            trimmed.startsWith('File "<stdin>", line ') ||
+            trimmed === 'KeyboardInterrupt:' ||
+            trimmed === '>>>' ||
+            trimmed === 'Port View Placeholder'
+        ) {
+            hideTelemetryCleanupLines -= 1;
+            return true;
+        }
+    }
+
+    return line.trim() === 'Port View Placeholder';
+}
+
+function filterTelemetryStdout(value: string): string {
+    if (suppressTelemetryStartupStdout) {
+        return '';
+    }
+
+    const lines = `${stdoutLineBuffer}${value}`.split(/\r?\n/);
+    stdoutLineBuffer = lines.pop() ?? '';
+
+    const visibleLines = lines.filter((line) => !isHiddenTelemetryStdoutLine(line));
+    let visible = visibleLines.map((line) => `${line}\r\n`).join('');
+
+    if (stdoutLineBuffer && isHiddenTelemetryStdoutLine(stdoutLineBuffer)) {
+        stdoutLineBuffer = '';
+    }
+
+    if (stdoutLineBuffer && !isTelemetryLinePrefix(stdoutLineBuffer)) {
+        visible += stdoutLineBuffer;
+        stdoutLineBuffer = '';
+    }
+
+    return visible;
+}
+
+function handleHubStartTelemetryMonitor(): void {
+    suppressTelemetryStartupStdout = true;
+    stdoutLineBuffer = '';
+}
+
+function handleHubTelemetryMonitorStarted(): void {
+    suppressTelemetryStartupStdout = false;
+    stdoutLineBuffer = '';
+}
 
 function* receiveUartData(action: ReturnType<typeof didNotify>): Generator {
     const { runtime: hubState, useLegacyStdio } = yield* select(
@@ -58,14 +132,22 @@ function* receiveUartData(action: ReturnType<typeof didNotify>): Generator {
     }
 
     const value = uartDecoder.decode(action.value.buffer, { stream: true });
-    yield* put(sendData(value));
+    const visibleValue = filterTelemetryStdout(value);
+
+    if (visibleValue) {
+        yield* put(sendData(visibleValue));
+    }
 }
 
 function* handleReceiveWriteStdout(
     action: ReturnType<typeof didReceiveWriteStdout>,
 ): Generator {
     const value = stdoutDecoder.decode(action.payload, { stream: true });
-    yield* put(sendData(value));
+    const visibleValue = filterTelemetryStdout(value);
+
+    if (visibleValue) {
+        yield* put(sendData(visibleValue));
+    }
 }
 
 function* receiveTerminalData(): Generator {
@@ -176,4 +258,10 @@ export default function* (): Generator {
     yield* fork(receiveTerminalData);
     yield* takeEvery(sendData, sendTerminalData);
     yield* takeEvery(hubDidStartRepl, handleHubDidStartRepl);
+    yield* takeEvery(hubStartTelemetryMonitor, handleHubStartTelemetryMonitor);
+    yield* takeEvery(hubDidStartTelemetryMonitor, handleHubTelemetryMonitorStarted);
+    yield* takeEvery(
+        hubDidFailToStartTelemetryMonitor,
+        handleHubTelemetryMonitorStarted,
+    );
 }

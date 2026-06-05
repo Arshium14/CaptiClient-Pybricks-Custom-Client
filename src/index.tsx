@@ -19,6 +19,7 @@ import { rootReducer } from './reducers';
 import { serializableCheck } from './redux';
 import reportWebVitals from './reportWebVitals';
 import rootSaga, { RootSagaContext } from './sagas';
+import SpikePrimeApp from './spike-prime/SpikePrimeApp';
 import { defaultTerminalContext } from './terminal/TerminalContext';
 import { defined } from './utils';
 import { createCountFunc } from './utils/iter';
@@ -76,13 +77,20 @@ sagaMiddleware.run(rootSaga);
 const container = document.getElementById('root');
 defined(container);
 const root = createRoot(container);
+const shellParam = new URLSearchParams(window.location.search).get('shell');
+const normalizedPath = window.location.pathname.replace(/\/+$/, '');
+const normalizedHashPath = window.location.hash.replace(/^#/, '').replace(/\/+$/, '');
+const isSpikePrimeShell =
+    shellParam === 'spike-prime' ||
+    normalizedPath === '/spike-prime' ||
+    normalizedHashPath === '/spike-prime';
 
 root.render(
     <Provider store={store}>
         <I18nContext.Provider value={i18nManager}>
             <OverlayProvider>
                 <HotkeysProvider>
-                    <App />
+                    {isSpikePrimeShell ? <SpikePrimeApp /> : <App />}
                 </HotkeysProvider>
             </OverlayProvider>
             <OverlayToaster ref={toasterRef} />

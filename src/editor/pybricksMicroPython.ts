@@ -180,6 +180,14 @@ export const language = <monaco.languages.IMonarchLanguage>{
             { include: '@whitespace' },
             { include: '@numbers' },
             { include: '@strings' },
+            [
+                /\b(from)(\s+)([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*)/,
+                ['keyword', 'white', 'support.module'],
+            ],
+            [
+                /\b(import)(\s+)([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*)/,
+                ['keyword', 'white', 'support.module'],
+            ],
             [/@[a-zA-Z_]\w*/, 'tag'],
             [/\.\.\./, 'keyword'],
             [/->/, 'delimiter'],

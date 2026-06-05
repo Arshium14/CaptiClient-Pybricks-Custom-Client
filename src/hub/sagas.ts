@@ -18,15 +18,23 @@ import { didFailToWrite, didWrite, write } from '../ble-nordic-uart-service/acti
 import { nordicUartSafeTxCharLength } from '../ble-nordic-uart-service/protocol';
 import {
     didFailToSendCommand,
+    didReceiveStatusReport,
+    didReceiveWriteStdout,
     didSendCommand,
     sendLegacyStartReplCommand,
     sendLegacyStartUserProgramCommand,
     sendStartUserProgramCommand,
     sendStopUserProgramCommand,
+    sendWriteStdinCommand,
     sendWriteUserProgramMetaCommand,
     sendWriteUserRamCommand,
 } from '../ble-pybricks-service/actions';
-import { BuiltinProgramId, FileFormat } from '../ble-pybricks-service/protocol';
+import {
+    BuiltinProgramId,
+    FileFormat,
+    Status,
+    statusToFlag,
+} from '../ble-pybricks-service/protocol';
 import { editorGetValue } from '../editor/sagaLib';
 import {
     compile,
@@ -47,14 +55,55 @@ import {
     didStartDownload,
     downloadAndRun,
     hubDidFailToStartRepl,
+    hubDidFailToStartTelemetryMonitor,
     hubDidFailToStopUserProgram,
     hubDidStartRepl,
+    hubDidStartTelemetryMonitor,
     hubDidStopUserProgram,
     hubStartRepl,
+    hubStartTelemetryMonitor,
     hubStopUserProgram,
 } from './actions';
+import { HubRuntimeState } from './reducers';
 
 const downloadChunkSize = 100;
+const stdinCommandOverhead = 1;
+let telemetryMonitorStartInFlight = false;
+let telemetryMonitorActive = false;
+let telemetryAutoStartPaused = false;
+let telemetryStdoutBuffer = '';
+const telemetryMonitorProgram = `from pybricks.hubs import PrimeHub
+from pybricks.pupdevices import Motor
+from pybricks.parameters import Port
+from pybricks.tools import wait
+
+hub = PrimeHub()
+ports = [Port.A, Port.B, Port.C, Port.D, Port.E, Port.F]
+motors = []
+
+for port in ports:
+    try:
+        motors.append(Motor(port))
+    except OSError:
+        motors.append(None)
+
+while True:
+    pitch, roll = hub.imu.tilt()
+    print("CAPTICLIENT_TELEMETRY imu {} {} {}".format(
+        int(pitch),
+        int(roll),
+        int(hub.imu.heading()),
+    ))
+
+    for index, motor in enumerate(motors):
+        if motor:
+            print("CAPTICLIENT_TELEMETRY motor {} {}".format(
+                index,
+                int(motor.angle()),
+            ))
+
+    wait(250)
+`;
 
 function* waitForWrite(id: number): SagaGenerator<{
     didWrite: ReturnType<typeof didWrite> | undefined;
@@ -183,12 +232,23 @@ function* handleLegacyDownloadAndRun(
 }
 
 function* handleDownloadAndRun(action: ReturnType<typeof downloadAndRun>): Generator {
+    telemetryAutoStartPaused = true;
+    telemetryMonitorActive = false;
+    telemetryMonitorStartInFlight = false;
+
     if (action.useLegacyDownload) {
-        yield* handleLegacyDownloadAndRun(action);
+        try {
+            yield* stopRunningProgramBeforeDownload();
+            yield* handleLegacyDownloadAndRun(action);
+        } finally {
+            telemetryAutoStartPaused = false;
+        }
         return;
     }
 
     try {
+        yield* stopRunningProgramBeforeDownload();
+
         // TODO: should everything before didStartDownload be in try block?
 
         if (action.fileFormat !== FileFormat.MultiMpy6) {
@@ -345,6 +405,8 @@ function* handleDownloadAndRun(action: ReturnType<typeof downloadAndRun>): Gener
         }
 
         yield* put(didFailToFinishDownload());
+    } finally {
+        telemetryAutoStartPaused = false;
     }
 }
 
@@ -397,6 +459,200 @@ function* handleHubStartRepl(action: ReturnType<typeof hubStartRepl>): Generator
     yield* put(hubDidStartRepl());
 }
 
+function* stopRunningProgramBeforeDownload(): Generator {
+    const runtime = yield* select((s: RootState) => s.hub.runtime);
+
+    if (runtime !== HubRuntimeState.Running) {
+        return;
+    }
+
+    const nextMessageId = yield* getContext<() => number>('nextMessageId');
+    const id = nextMessageId();
+
+    yield* put(sendStopUserProgramCommand(id));
+
+    const { didFailToSend } = yield* race({
+        didSend: take(didSendCommand.when((a) => a.id === id)),
+        didFailToSend: take(didFailToSendCommand.when((a) => a.id === id)),
+    });
+
+    if (didFailToSend) {
+        throw didFailToSend.error;
+    }
+
+    yield* race({
+        didBecomeIdle: take(
+            didReceiveStatusReport.when(
+                (a) => !(a.statusFlags & statusToFlag(Status.UserProgramRunning)),
+            ),
+        ),
+        timeout: delay(1000),
+    });
+}
+
+function* canStartTelemetryMonitor(): SagaGenerator<boolean> {
+    const { runtime } = yield* select((s: RootState) => s.hub);
+
+    return (
+        !telemetryAutoStartPaused &&
+        runtime !== HubRuntimeState.Disconnected &&
+        runtime !== HubRuntimeState.Loading &&
+        runtime !== HubRuntimeState.Running &&
+        runtime !== HubRuntimeState.StartingRepl &&
+        runtime !== HubRuntimeState.StoppingUserProgram
+    );
+}
+
+function* handleMaybeStartTelemetryMonitor(
+    action: ReturnType<typeof didReceiveStatusReport>,
+): Generator {
+    if (action.statusFlags & statusToFlag(Status.UserProgramRunning)) {
+        telemetryMonitorActive = false;
+        telemetryMonitorStartInFlight = false;
+        return;
+    }
+
+    telemetryMonitorActive = false;
+
+    if (telemetryMonitorStartInFlight) {
+        return;
+    }
+
+    yield* delay(250);
+
+    if (yield* canStartTelemetryMonitor()) {
+        yield* put(hubStartTelemetryMonitor());
+    }
+}
+
+function* writeStdinText(value: string): Generator {
+    const nextMessageId = yield* getContext<() => number>('nextMessageId');
+    const data = new TextEncoder().encode(value);
+    const { useLegacyStdio, maxBleWriteSize } = yield* select((s: RootState) => s.hub);
+
+    if (useLegacyStdio) {
+        for (let i = 0; i < data.length; i += nordicUartSafeTxCharLength) {
+            const writeAction = yield* put(
+                write(nextMessageId(), data.slice(i, i + nordicUartSafeTxCharLength)),
+            );
+            const { didFailToWrite } = yield* waitForWrite(writeAction.id);
+
+            if (didFailToWrite) {
+                throw didFailToWrite.error;
+            }
+        }
+
+        return;
+    }
+
+    const chunkSize = Math.max(1, maxBleWriteSize - stdinCommandOverhead);
+
+    for (let i = 0; i < data.length; i += chunkSize) {
+        const id = nextMessageId();
+
+        yield* put(sendWriteStdinCommand(id, data.slice(i, i + chunkSize)));
+
+        const { didFailToSend } = yield* race({
+            didSend: take(didSendCommand.when((a) => a.id === id)),
+            didFailToSend: take(didFailToSendCommand.when((a) => a.id === id)),
+        });
+
+        if (didFailToSend) {
+            throw didFailToSend.error;
+        }
+    }
+}
+
+function* waitForStdoutText(text: string, timeoutMs = 5000): Generator {
+    const decoder = new TextDecoder();
+    let output = '';
+
+    for (;;) {
+        const { action, timeout } = yield* race({
+            action: take(didReceiveWriteStdout),
+            timeout: delay(timeoutMs),
+        });
+
+        if (timeout) {
+            throw new Error(`Timed out waiting for ${text}`);
+        }
+
+        defined(action);
+        output += decoder.decode(action.payload, { stream: true });
+
+        if (output.includes(text)) {
+            return;
+        }
+    }
+}
+
+function* handleTelemetryPlaceholderStdout(
+    action: ReturnType<typeof didReceiveWriteStdout>,
+): Generator {
+    telemetryStdoutBuffer += new TextDecoder().decode(action.payload, { stream: true });
+
+    if (!telemetryStdoutBuffer.includes('\n')) {
+        return;
+    }
+
+    const lines = telemetryStdoutBuffer.split(/\r?\n/);
+    telemetryStdoutBuffer = lines.pop() ?? '';
+
+    if (lines.some((line) => line.trim() === 'Port View Placeholder')) {
+        telemetryMonitorActive = false;
+        telemetryMonitorStartInFlight = false;
+        yield* put(hubStopUserProgram());
+    }
+}
+
+function* handleStartTelemetryMonitor(): Generator {
+    if (telemetryMonitorStartInFlight || telemetryMonitorActive) {
+        return;
+    }
+
+    if (!(yield* canStartTelemetryMonitor())) {
+        return;
+    }
+
+    telemetryMonitorStartInFlight = true;
+
+    try {
+        const { useLegacyDownload, useLegacyStartUserProgram } = yield* select(
+            (s: RootState) => s.hub,
+        );
+
+        yield* put(hubStartRepl(useLegacyDownload, useLegacyStartUserProgram));
+
+        const { didFail } = yield* race({
+            didStart: take(hubDidStartRepl),
+            didFail: take(hubDidFailToStartRepl),
+        });
+
+        if (didFail) {
+            throw new Error('Failed to start REPL');
+        }
+
+        yield* waitForStdoutText('>>> ');
+        yield* writeStdinText('\x05');
+        yield* waitForStdoutText('===');
+        yield* writeStdinText(telemetryMonitorProgram);
+        yield* delay(100);
+        yield* writeStdinText('\x04');
+        telemetryMonitorActive = true;
+        yield* put(hubDidStartTelemetryMonitor());
+    } catch (err) {
+        const error = ensureError(err);
+
+        if (process.env.NODE_ENV !== 'test') {
+            console.error(error);
+        }
+
+        yield* put(hubDidFailToStartTelemetryMonitor(error));
+    } finally {
+        telemetryMonitorStartInFlight = false;
+    }
+}
+
 function* handleStopUserProgram(): Generator {
     const nextMessageId = yield* getContext<() => number>('nextMessageId');
     const id = nextMessageId();
@@ -436,5 +692,8 @@ function* handleStopUserProgram(): Generator {
 export default function* (): Generator {
     yield* takeEvery(downloadAndRun, handleDownloadAndRun);
     yield* takeEvery(hubStartRepl, handleHubStartRepl);
+    yield* takeEvery(didReceiveStatusReport, handleMaybeStartTelemetryMonitor);
+    yield* takeEvery(didReceiveWriteStdout, handleTelemetryPlaceholderStdout);
+    yield* takeEvery(hubStartTelemetryMonitor, handleStartTelemetryMonitor);
     yield* takeEvery(hubStopUserProgram, handleStopUserProgram);
 }

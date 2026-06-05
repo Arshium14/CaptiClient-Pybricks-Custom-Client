@@ -18,6 +18,8 @@ import {
     blePybricksServiceDidNotReceiveHubCapabilities,
     blePybricksServiceDidReceiveHubCapabilities,
     didReceiveStatusReport,
+    didReceiveWriteAppData,
+    didReceiveWriteStdout,
 } from '../ble-pybricks-service/actions';
 import {
     FileFormat,
@@ -57,6 +59,12 @@ test('initial state', () => {
           "preferredFileFormat": null,
           "runtime": "hub.runtime.disconnected",
           "selectedSlot": 0,
+          "telemetry": {
+            "imu": null,
+            "lastUpdated": null,
+            "motors": {},
+            "stdoutBuffer": "",
+          },
           "useLegacyDownload": false,
           "useLegacyMainModule": false,
           "useLegacyStartUserProgram": false,
@@ -563,5 +571,83 @@ describe('useLegacyMainModule', () => {
                 bleDIServiceDidReceiveSoftwareRevision('1.5.0'),
             ).useLegacyMainModule,
         ).toBeFalsy();
+    });
+});
+
+describe('telemetry', () => {
+    beforeEach(() => {
+        jest.spyOn(Date, 'now').mockReturnValue(1234);
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    test('didReceiveWriteAppData stores IMU telemetry', () => {
+        const payload = new ArrayBuffer(7);
+        const view = new DataView(payload);
+
+        view.setUint8(0, 0x12);
+        view.setInt16(1, 12, true);
+        view.setInt16(3, -34, true);
+        view.setInt16(5, 56, true);
+
+        expect(reducers(undefined, didReceiveWriteAppData(payload)).telemetry).toEqual({
+            imu: {
+                pitch: 12,
+                roll: -34,
+                heading: 56,
+            },
+            motors: {},
+            lastUpdated: 1234,
+            stdoutBuffer: '',
+        });
+    });
+
+    test('didReceiveWriteAppData stores motor telemetry by port', () => {
+        const payload = new ArrayBuffer(9);
+        const view = new DataView(payload);
+
+        view.setUint8(0, 0x21);
+        view.setUint8(1, 2);
+        view.setInt16(2, 360, true);
+        view.setInt16(4, -90, true);
+        view.setInt16(6, 8, true);
+        view.setUint8(8, 1);
+
+        expect(reducers(undefined, didReceiveWriteAppData(payload)).telemetry).toEqual({
+            imu: null,
+            motors: {
+                2: {
+                    angle: 360,
+                    speed: -90,
+                    load: 8,
+                    isStalled: true,
+                },
+            },
+            lastUpdated: 1234,
+            stdoutBuffer: '',
+        });
+    });
+
+    test('didReceiveWriteStdout stores text telemetry', () => {
+        const payload = new TextEncoder().encode(
+            'CAPTICLIENT_TELEMETRY imu 1 2 3\nCAPTICLIENT_TELEMETRY motor B 90\n',
+        ).buffer;
+
+        expect(reducers(undefined, didReceiveWriteStdout(payload)).telemetry).toEqual({
+            imu: {
+                pitch: 1,
+                roll: 2,
+                heading: 3,
+            },
+            motors: {
+                1: {
+                    angle: 90,
+                },
+            },
+            lastUpdated: 1234,
+            stdoutBuffer: '',
+        });
     });
 });

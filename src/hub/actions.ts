@@ -90,3 +90,17 @@ export const hubDidStartRepl = createAction(() => ({
 export const hubDidFailToStartRepl = createAction(() => ({
     type: 'hub.action.didFailToStartRepl',
 }));
+
+/** Request to run the built-in CaptiClient telemetry monitor on the hub. */
+export const hubStartTelemetryMonitor = createAction(() => ({
+    type: 'hub.action.startTelemetryMonitor',
+}));
+
+export const hubDidStartTelemetryMonitor = createAction(() => ({
+    type: 'hub.action.didStartTelemetryMonitor',
+}));
+
+export const hubDidFailToStartTelemetryMonitor = createAction((error: Error) => ({
+    type: 'hub.action.didFailToStartTelemetryMonitor',
+    error,
+}));

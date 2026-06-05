@@ -545,7 +545,6 @@ const AiAssistant: React.FunctionComponent = () => {
             <Button
                 id="pb-toolbar-ai-button"
                 className="pb-ai-open-button"
-                icon={<KeyEnter />}
                 intent="primary"
                 title="AI coding helper"
                 onClick={() => setIsOpen(true)}

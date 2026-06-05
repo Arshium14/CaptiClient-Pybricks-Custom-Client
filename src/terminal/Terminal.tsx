@@ -187,12 +187,12 @@ const Terminal: React.FunctionComponent = () => {
     // wire up isDarkMode to terminal
     useEffect(() => {
         xterm.options.theme = {
-            background: isDarkMode ? 'black' : 'white',
-            foreground: isDarkMode ? 'white' : 'black',
-            cursor: isDarkMode ? 'white' : 'black',
+            background: isDarkMode ? '#101918' : '#ffffff',
+            foreground: isDarkMode ? '#eef8f4' : '#1f1f1f',
+            cursor: isDarkMode ? '#acebc9' : '#338e7f',
             // transparency is needed to work around https://github.com/xtermjs/xterm.js/issues/2808
             selectionBackground: isDarkMode
-                ? 'rgb(81,81,81,0.5)'
+                ? 'rgba(172,235,201,0.22)'
                 : 'rgba(181,213,255,0.5)', // this should match editor theme
         };
     }, [isDarkMode, xterm]);
@@ -249,6 +249,16 @@ const Terminal: React.FunctionComponent = () => {
         return () => removeEventListener('pb-terminal-focus', listener);
     }, [xterm]);
 
+    useEffect(() => {
+        const listener = () => {
+            xterm.clear();
+        };
+
+        addEventListener('pb-terminal-clear', listener);
+
+        return () => removeEventListener('pb-terminal-clear', listener);
+    }, [xterm]);
+
     // audio and visual notification of bell
 
     const bellRef = useRef<HTMLAudioElement>(null);
@@ -281,7 +291,7 @@ const Terminal: React.FunctionComponent = () => {
 
     return (
         <ContextMenu
-            className="h-100"
+            className="pb-terminal h-100"
             content={<ContextMenuContent xterm={xterm} getRecentText={getRecentText} />}
             popoverProps={{ onClosed: () => xterm.focus() }}
         >
